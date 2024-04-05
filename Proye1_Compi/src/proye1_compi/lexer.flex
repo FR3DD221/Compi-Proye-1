@@ -49,6 +49,7 @@ intNum = [0]|[1-9][0-9]*
 floatNum = [+-]?([0-9]*[.])?[0-9]+
 true = "true"
 
+
 %state STRING
 
 %%
@@ -59,34 +60,63 @@ true = "true"
 <YYINITIAL> "break"              { return symbol(sym.BREAK); }
 
 
-<YYINITIAL> {dot}                  { System.out.println("punto"); return symbol(sym.DOT); }
-<YYINITIAL> {intNum}               { System.out.println("entero"); return symbol(sym.INTNUM); }
-<YYINITIAL> {floatNum}             { System.out.println("flotante"); return symbol(sym.FLOATNUM); }
-<YYINITIAL> {true}                 { System.out.println("true"); return symbol(sym.TRUE); }
+<YYINITIAL> {dot}                { System.out.println("punto"); return symbol(sym.DOT); }
+<YYINITIAL> {intNum}             { System.out.println("entero"); return symbol(sym.INTNUM); }
+<YYINITIAL> {floatNum}           { System.out.println("flotante"); return symbol(sym.FLOATNUM); }
+<YYINITIAL> {true}               { System.out.println("true"); return symbol(sym.TRUE); }
+<YYINITIAL> "false"              { return symbol(sym.FALSE); }
 
-/*
-<YYINITIAL> {minus}              { return new Symbol(sym.minus, yycolum, yyline, yytext); }
-<YYINITIAL> {product}            { return new Symbol(sym.product, yycolum, yyline, yytext); }
-<YYINITIAL> {division}           { return new Symbol(sym.division, yycolum, yyline, yytext); }
-<YYINITIAL> {power}              { return new Symbol(sym.power, yycolum, yyline, yytext); }
-<YYINITIAL> {delimeterBlock}     { return new Symbol(sym.delimeterBlock, yycolum, yyline, yytext); }
-<YYINITIAL> {modulus}            { return new Symbol(sym.modulus, yycolum, yyline, yytext); }
-<YYINITIAL> {sep}                { return new Symbol(sym.sep, yycolum, yyline, yytext); }
-<YYINITIAL> {int}                { return new Symbol(sym.int, yycolum, yyline, yytext); }
-<YYINITIAL> {char}               { return new Symbol(sym.char, yycolum, yyline, yytext); }
-<YYINITIAL> {float}              { return new Symbol(sym.float, yycolum, yyline, yytext); }
-<YYINITIAL> {bool}               { return new Symbol(sym.bool, yycolum, yyline, yytext); }
-<YYINITIAL> {if}                 { return new Symbol(sym.if, yycolum, yyline, yytext); }
-<YYINITIAL> {func}               { return new Symbol(sym.func, yycolum, yyline, yytext); }
-<YYINITIAL> {main}               { return new Symbol(sym.main, yycolum, yyline, yytext); }
-<YYINITIAL> {diff}               { return new Symbol(sym.diff, yycolum, yyline, yytext); }
-<YYINITIAL> {else}               { return new Symbol(sym.else, yycolum, yyline, yytext); }
-<YYINITIAL> {true}               { return new Symbol(sym.true, yycolum, yyline, yytext); }
-<YYINITIAL> {false}              { return new Symbol(sym.false, yycolum, yyline, yytext); }
-<YYINITIAL> {boolN}              { return new Symbol(sym.boolN, yycolum, yyline, yytext); }
-<YYINITIAL> {mathOp}             { return new Symbol(sym.mathOp, yycolum, yyline, yytext); }
-<YYINITIAL> {intN}               { return new Symbol(sym.intN, yycolum, yyline, yytext); }
-*/
+<YYINITIAL> "*"                  { return symbol(sym.PRODUCT); }
+<YYINITIAL> "/"                  { return symbol(sym.DIVISION); }
+<YYINITIAL> "^"                  { return symbol(sym.POWER); }
+<YYINITIAL> "_"                  { return symbol(sym.DELIMETERBLOCK); }
+<YYINITIAL> "%"                  { return symbol(sym.MODULUS); }
+<YYINITIAL> ":"                  { return symbol(sym.SEP); }
+<YYINITIAL> "int"                { return symbol(sym.INT); }
+<YYINITIAL> "char"               { return symbol(sym.CHAR); }
+<YYINITIAL> "float"              { return symbol(sym.FLOAT); }
+<YYINITIAL> "bool"               { return symbol(sym.BOOL); }
+<YYINITIAL> "if"                 { return symbol(sym.IF); }
+<YYINITIAL> "else"               { return symbol(sym.ELSE); }
+
+<YYINITIAL> "switch"             { return symbol(sym.SWITCH); }
+<YYINITIAL> "case"               { return symbol(sym.CASE); }
+<YYINITIAL> "while"              { return symbol(sym.WHILE); }
+<YYINITIAL> "for"                { return symbol(sym.FOR); }
+<YYINITIAL> "in"                 { return symbol(sym.IN); }
+<YYINITIAL> "range"              { return symbol(sym.RANGE); }
+
+<YYINITIAL> ">"                  { return symbol(sym.GRATHER); }
+<YYINITIAL> "<"                  { return symbol(sym.LOWER); }
+<YYINITIAL> ">="                 { return symbol(sym.GRATHERT); }
+<YYINITIAL> "<="                 { return symbol(sym.LOWERT); }
+<YYINITIAL> "!="                 { return symbol(sym.DIFF); }
+<YYINITIAL> "!"                  { return symbol(sym.NEGATION); }
+<YYINITIAL> "&&"                 { return symbol(sym.AND); }
+<YYINITIAL> "||"                 { return symbol(sym.OR); }
+
+
+<YYINITIAL> "func"               { return symbol(sym.FUNC); }
+<YYINITIAL> "main"               { return symbol(sym.MAIN); }
+<YYINITIAL> "param"              { return symbol(sym.PARAM); }
+<YYINITIAL> "("                  { return symbol(sym.PARENTS); }
+<YYINITIAL> ")"                  { return symbol(sym.PARENTC); }
+
+<YYINITIAL> "["                  { return symbol(sym.SQUARES); }
+<YYINITIAL> "]"                  { return symbol(sym.SQUAREC); }
+<YYINITIAL> "loc"                { return symbol(sym.LOC); }
+<YYINITIAL> "glob"               { return symbol(sym.GLOB); }
+<YYINITIAL> "return"             { return symbol(sym.RETURN); }
+<YYINITIAL> "default"            { return symbol(sym.DEFAULT); }
+<YYINITIAL> "brake"              { return symbol(sym.BRAKE); }
+<YYINITIAL> "print"              { return symbol(sym.PRINT); }
+<YYINITIAL> "input"              { return symbol(sym.INPUT); }
+
+
+
+<YYINITIAL> ";"                  { return symbol(sym.ENDEXPR); }
+
+
 
 <YYINITIAL> {
   /* identifiers */ 

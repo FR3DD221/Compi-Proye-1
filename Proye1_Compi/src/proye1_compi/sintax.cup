@@ -20,12 +20,16 @@ scan with {:return lex.next_token();:};
 
 
 /* Terminals (tokens returned by the scanner). */
-terminal            SEMI, PLUS, MINUS, TIMES, UMINUS, LPAREN, RPAREN;
+terminal            SEMI, PLUS, MINUS, TIMES, UMINUS, PRODUCT, DIVISION, POWER, MODULUS, LPAREN, RPAREN;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
-terminal            IDENTIFIER, INTEGER_LITERAL, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ;
-terminal            DOT;
-terminal            FLOATNUM, INTNUM;
-terminal            TRUE;
+terminal            IDENTIFIER, INTEGER_LITERAL, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
+terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, AND, OR, SEP;
+terminal            FLOATNUM, INTNUM, INT, CHAR, FLOAT, BOOL;
+terminal            TRUE, FALSE;
+terminal            IF, ELSE, WHILE, FOR, IN, RANGE, SWITCH, CASE;
+terminal            FUNC, MAIN, PARAM, LOC, GLOBAL, BRAKE, DEFAULT, RETURN, PRINT, READ;
+terminal            PARENTS, PARENTC, SQUARES, SQUAREC, DELIMETERBLOCK;
+terminal            ENDEXPR;
 
 /* Non terminals */
 non terminal            expr_list;
