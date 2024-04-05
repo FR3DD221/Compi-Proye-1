@@ -23,6 +23,65 @@ import java_cup.runtime.*;
   }
 %}
 
+
+plus = "+"
+minus = "-"
+product = "*"
+division = "/"
+power = "^"
+modulus = "%"
+
+mathOp = plus | minus | product | division | modulus | power
+
+areEquals = "=="
+gratherThan = ">"
+lessThan = "<"
+gratherEQThan = ">="
+lessEQThan = "<="
+diff = "!="
+
+boolsMathOp = lessThan | gratherThan | areEquals | gratherEQThan | lessEQThan | diff
+
+equal = "="
+unaryPlus = "++"
+unaryMinus = "--"
+sep = ":"
+endLine = ";"
+delimeterBlock = "_"
+dot = "\."
+
+parentS = "("
+parentE = ")"
+
+digit = [0-9]
+digitNoZero = [1-9]
+
+intNum = {digit}|{digitNoZero} {digit}+
+floatNum = {intNum} {dot} {intNum}+
+
+letter = [a-zA-Z]
+chainLetters = [a-zA-Z]+
+charInt = {letter} | {intNum}
+
+id = {letter} ({letters} | {numbers})*
+
+int = "int"
+bool = "boolean"
+float = "float"
+char = "char"
+string = "string"
+main = "main"
+func = "funtion"
+
+types = {int} | {bool} | {float} | {char} | {string}
+
+if = "if"
+else = "else"
+
+true = "true"
+false = "false"
+boolN = {true} | {false}
+
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace     = {LineTerminator} | [ \t\f]
