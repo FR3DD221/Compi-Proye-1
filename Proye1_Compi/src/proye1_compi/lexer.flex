@@ -1,4 +1,6 @@
 /* JFlex example: partial Java language lexer specification */
+package proye1_compi;
+
 import java_cup.runtime.*;
 
 /**
@@ -23,65 +25,6 @@ import java_cup.runtime.*;
   }
 %}
 
-
-plus = "+"
-minus = "-"
-product = "*"
-division = "/"
-power = "^"
-modulus = "%"
-
-mathOp = plus | minus | product | division | modulus | power
-
-areEquals = "=="
-gratherThan = ">"
-lessThan = "<"
-gratherEQThan = ">="
-lessEQThan = "<="
-diff = "!="
-
-boolsMathOp = lessThan | gratherThan | areEquals | gratherEQThan | lessEQThan | diff
-
-equal = "="
-unaryPlus = "++"
-unaryMinus = "--"
-sep = ":"
-endLine = ";"
-delimeterBlock = "_"
-dot = "\."
-
-parentS = "("
-parentE = ")"
-
-digit = [0-9]
-digitNoZero = [1-9]
-
-intNum = {digit}|{digitNoZero} {digit}+
-floatNum = {intNum} {dot} {intNum}+
-
-letter = [a-zA-Z]
-chainLetters = [a-zA-Z]+
-charInt = {letter} | {intNum}
-
-id = {letter} ({letters} | {numbers})*
-
-int = "int"
-bool = "boolean"
-float = "float"
-char = "char"
-string = "string"
-main = "main"
-func = "funtion"
-
-types = {int} | {bool} | {float} | {char} | {string}
-
-if = "if"
-else = "else"
-
-true = "true"
-false = "false"
-boolN = {true} | {false}
-
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace     = {LineTerminator} | [ \t\f]
@@ -99,6 +42,13 @@ Identifier = [:jletter:] [:jletterdigit:]*
 
 DecIntegerLiteral = 0 | [1-9][0-9]*
 
+digit = [0-9]
+digitNoZero = [1-9]
+dot = "\."
+intNum = [0]|[1-9][0-9]*
+floatNum = [+-]?([0-9]*[.])?[0-9]+
+true = "true"
+
 %state STRING
 
 %%
@@ -107,6 +57,36 @@ DecIntegerLiteral = 0 | [1-9][0-9]*
 <YYINITIAL> "abstract"           { return symbol(sym.ABSTRACT); }
 <YYINITIAL> "boolean"            { return symbol(sym.BOOLEAN); }
 <YYINITIAL> "break"              { return symbol(sym.BREAK); }
+
+
+<YYINITIAL> {dot}                  { System.out.println("punto"); return symbol(sym.DOT); }
+<YYINITIAL> {intNum}               { System.out.println("entero"); return symbol(sym.INTNUM); }
+<YYINITIAL> {floatNum}             { System.out.println("flotante"); return symbol(sym.FLOATNUM); }
+<YYINITIAL> {true}                 { System.out.println("true"); return symbol(sym.TRUE); }
+
+/*
+<YYINITIAL> {minus}              { return new Symbol(sym.minus, yycolum, yyline, yytext); }
+<YYINITIAL> {product}            { return new Symbol(sym.product, yycolum, yyline, yytext); }
+<YYINITIAL> {division}           { return new Symbol(sym.division, yycolum, yyline, yytext); }
+<YYINITIAL> {power}              { return new Symbol(sym.power, yycolum, yyline, yytext); }
+<YYINITIAL> {delimeterBlock}     { return new Symbol(sym.delimeterBlock, yycolum, yyline, yytext); }
+<YYINITIAL> {modulus}            { return new Symbol(sym.modulus, yycolum, yyline, yytext); }
+<YYINITIAL> {sep}                { return new Symbol(sym.sep, yycolum, yyline, yytext); }
+<YYINITIAL> {int}                { return new Symbol(sym.int, yycolum, yyline, yytext); }
+<YYINITIAL> {char}               { return new Symbol(sym.char, yycolum, yyline, yytext); }
+<YYINITIAL> {float}              { return new Symbol(sym.float, yycolum, yyline, yytext); }
+<YYINITIAL> {bool}               { return new Symbol(sym.bool, yycolum, yyline, yytext); }
+<YYINITIAL> {if}                 { return new Symbol(sym.if, yycolum, yyline, yytext); }
+<YYINITIAL> {func}               { return new Symbol(sym.func, yycolum, yyline, yytext); }
+<YYINITIAL> {main}               { return new Symbol(sym.main, yycolum, yyline, yytext); }
+<YYINITIAL> {diff}               { return new Symbol(sym.diff, yycolum, yyline, yytext); }
+<YYINITIAL> {else}               { return new Symbol(sym.else, yycolum, yyline, yytext); }
+<YYINITIAL> {true}               { return new Symbol(sym.true, yycolum, yyline, yytext); }
+<YYINITIAL> {false}              { return new Symbol(sym.false, yycolum, yyline, yytext); }
+<YYINITIAL> {boolN}              { return new Symbol(sym.boolN, yycolum, yyline, yytext); }
+<YYINITIAL> {mathOp}             { return new Symbol(sym.mathOp, yycolum, yyline, yytext); }
+<YYINITIAL> {intN}               { return new Symbol(sym.intN, yycolum, yyline, yytext); }
+*/
 
 <YYINITIAL> {
   /* identifiers */ 
@@ -140,7 +120,3 @@ DecIntegerLiteral = 0 | [1-9][0-9]*
   \\\"                           { string.append('\"'); }
   \\                             { string.append('\\'); }
 }
-
-/* error fallback */
-[^]                              { throw new Error("Illegal character <"+
-                                                    yytext()+">"); }

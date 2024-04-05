@@ -1,41 +1,50 @@
-// CUP specification for a simple expression evaluator (no actions)
-
+package proye1_compi;
 import java_cup.runtime.*;
 
-/* Preliminaries to set up and use the scanner.  */
-init with {: scanner.init();              :};
-scan with {: return scanner.next_token(); :};
+parser code {:
+    // Connect this parser to a scanner!
+    Lexer lex;
+
+    @SuppressWarnings("deprecation")
+    public Parser(Lexer lex) {
+        this.lex = lex;
+        this.symbolFactory = new DefaultSymbolFactory();
+    }
+:}
+
+/* define how to connect to the scanner! */
+//init with {: s.init(); :};
+//scan with {: return s.next_token(); :};
+init with {::};
+scan with {:return lex.next_token();:};
+
 
 /* Terminals (tokens returned by the scanner). */
-terminal            SEMI, PLUS, MINUS, TIMES, DIVIDE, MOD;
-terminal            IDENTIFIER;
-terminal            INTEGER_LITERAL, BOOLEAN;
-terminal            EQ, EQEQ;
-terminal            STRING_LITERAL;
-terminal            BREAK;
-terminal            ABSTRACT;
-terminal            UMINUS, LPAREN, RPAREN;
-terminal Integer    NUMBER;
+terminal            SEMI, PLUS, MINUS, TIMES, UMINUS, LPAREN, RPAREN;
+terminal Integer    NUMBER;        // our scanner provides numbers as integers
+terminal            IDENTIFIER, INTEGER_LITERAL, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ;
+terminal            DOT;
+terminal            FLOATNUM, INTNUM;
+terminal            TRUE;
 
 /* Non terminals */
-non terminal            expr_list, expr_part;
-non terminal Integer    expr, term, factor;
+non terminal            expr_list;
+non terminal Integer    expr;      // used to store evaluated subexpressions
 
 /* Precedences */
 precedence left PLUS, MINUS;
-precedence left TIMES, DIVIDE, MOD;
+precedence left TIMES;
 precedence left UMINUS;
 
-/* The grammar */
-expr_list ::= expr_list expr_part | 
-              expr_part;
-expr_part ::= expr SEMI;
-expr      ::= expr PLUS expr 
-            | expr MINUS expr  
-            | expr TIMES expr  
-            | expr DIVIDE expr  
-            | expr MOD expr 
-	    | MINUS expr %prec UMINUS
-            | LPAREN expr RPAREN
-	    | NUMBER
-	    ;
+/* The grammar rules */
+expr_list ::= expr_list expr:e SEMI         {: System.out.println(e);:}
+            | expr:e SEMI                   {: System.out.println(e);:}
+;
+expr      ::= expr:e1 PLUS  expr:e2         {: RESULT = e1+e2;       :}
+             | expr:e1 MINUS expr:e2        {: RESULT = e1-e2;       :}
+             | expr:e1 TIMES expr:e2        {: RESULT = e1*e2;       :}
+             | MINUS expr:e                 {: RESULT = -e;          :}
+  	     %prec UMINUS
+       | LPAREN expr:e RPAREN	         {: RESULT = e;           :}
+       | NUMBER:n	                     {: RESULT = n;           :}
+             ;
