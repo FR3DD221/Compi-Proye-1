@@ -20,11 +20,11 @@ scan with {:return lex.next_token();:};
 
 
 /* Terminals (tokens returned by the scanner). */
-terminal            SEMI, PLUS, MINUS, TIMES, UMINUS, PRODUCT, DIVISION, POWER, MODULUS, LPAREN, RPAREN;
+terminal            SEMI, PLUS, MINUS, TIMES, UMINUS, PRODUCT, DIVISION, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
-terminal            IDENTIFIER, INTEGER_LITERAL, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
+terminal            IDENTIFIER, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
 terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, AND, OR, SEP;
-terminal            FLOATNUM, INTNUM, INT, CHAR, FLOAT, BOOL;
+terminal            FLOATNUM, INT, CHAR, FLOAT, BOOL;
 terminal            TRUE, FALSE;
 terminal            IF, ELSE, WHILE, FOR, IN, RANGE, SWITCH, CASE;
 terminal            FUNC, MAIN, PARAM, LOC, GLOBAL, BRAKE, DEFAULT, RETURN, PRINT, READ;
@@ -34,21 +34,31 @@ terminal            ENDEXPR;
 /* Non terminals */
 non terminal            expr_list;
 non terminal Integer    expr;      // used to store evaluated subexpressions
+non terminal            SI, mathOP, varAsig, BLOCK;
+
 
 /* Precedences */
 precedence left PLUS, MINUS;
 precedence left TIMES;
-precedence left UMINUS;
+precedence left DIVISION;
 
-/* The grammar rules */
-expr_list ::= expr_list expr:e SEMI         {: System.out.println(e);:}
-            | expr:e SEMI                   {: System.out.println(e);:}
-;
-expr      ::= expr:e1 PLUS  expr:e2         {: RESULT = e1+e2;       :}
-             | expr:e1 MINUS expr:e2        {: RESULT = e1-e2;       :}
-             | expr:e1 TIMES expr:e2        {: RESULT = e1*e2;       :}
-             | MINUS expr:e                 {: RESULT = -e;          :}
-  	     %prec UMINUS
-       | LPAREN expr:e RPAREN	         {: RESULT = e;           :}
-       | NUMBER:n	                     {: RESULT = n;           :}
-             ;
+/* The grammar rules */    
+
+start with SI;
+
+SI ::= BLOCK;
+
+BLOCK  ::=  SI mathOP
+       |SI varAsig
+       |mathOP  
+       |varAsig;    
+        
+
+mathOP       ::= mathOP PLUS mathOP        {:System.out.println("Se sumo");:}
+             | mathOP MINUS mathOP         {:System.out.println("Se resto");:}
+             | mathOP TIMES mathOP         {:System.out.println("Se multiplico");:}  
+             | mathOP DIVISION mathOP      {:System.out.println("Se dividio");:}                 
+             | INTEGER_LITERAL; 
+
+varAsig      ::= IDENTIFIER EQ INTEGER_LITERAL ENDEXPR       {:System.out.println("Se asigno");:}
+                 |IDENTIFIER EQ STRING_LITERAL ENDEXPR       {:System.out.println("Se asigno");:};

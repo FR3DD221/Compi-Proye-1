@@ -45,8 +45,7 @@ DecIntegerLiteral = 0 | [1-9][0-9]*
 digit = [0-9]
 digitNoZero = [1-9]
 dot = "\."
-intNum = [0]|[1-9][0-9]*
-floatNum = [+-]?([0-9]*[.])?[0-9]+
+floatNum = ([0-9]*[.])?[0-9]+
 true = "true"
 
 
@@ -59,9 +58,8 @@ true = "true"
 <YYINITIAL> "boolean"            { return symbol(sym.BOOLEAN); }
 <YYINITIAL> "break"              { return symbol(sym.BREAK); }
 
-
 <YYINITIAL> {dot}                { System.out.println("punto"); return symbol(sym.DOT); }
-<YYINITIAL> {intNum}             { System.out.println("entero"); return symbol(sym.INTNUM); }
+<YYINITIAL> {DecIntegerLiteral}  { return symbol(sym.INTEGER_LITERAL); }
 <YYINITIAL> {floatNum}           { System.out.println("flotante"); return symbol(sym.FLOATNUM); }
 <YYINITIAL> {true}               { System.out.println("true"); return symbol(sym.TRUE); }
 <YYINITIAL> "false"              { return symbol(sym.FALSE); }
@@ -123,7 +121,7 @@ true = "true"
   {Identifier}                   { return symbol(sym.IDENTIFIER); }
 
   /* literals */
-  {DecIntegerLiteral}            { return symbol(sym.INTEGER_LITERAL); }
+  <YYINITIAL> {DecIntegerLiteral}  { return symbol(sym.INTEGER_LITERAL); }
   \"                             { string.setLength(0); yybegin(STRING); }
 
   /* operators */

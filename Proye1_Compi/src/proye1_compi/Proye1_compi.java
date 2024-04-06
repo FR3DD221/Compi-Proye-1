@@ -31,7 +31,6 @@ public class Proye1_compi {
         String symLocation = currentDirectory + "\\sym.java";
         String ParserLocation = currentDirectory + "\\Parser.java";
 
-
         Path sym1 = Paths.get("").toAbsolutePath();
         String symd1 = sym1.toString();
         symd1 = symd1 + "\\src\\proye1_compi\\sym.java";
@@ -46,9 +45,8 @@ public class Proye1_compi {
         Files.move(Paths.get(symLocation), Paths.get(symd1), StandardCopyOption.REPLACE_EXISTING);
         Files.move(Paths.get(ParserLocation), Paths.get(pard1), StandardCopyOption.REPLACE_EXISTING);
         
-        
-        
         test1("C:\\Users\\fredd\\OneDrive\\Documentos\\GitHub\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\test.txt");
+        test2("C:\\Users\\fredd\\OneDrive\\Documentos\\GitHub\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\test.txt");
     }
     
     public static void generarLexer(String path) throws SilentExit, IOException {
@@ -62,21 +60,29 @@ public class Proye1_compi {
         java_cup.Main.main(strArr);
     }
     
-    public static void test1(String ruta) throws FileNotFoundException, IOException {
-        Reader reader = new BufferedReader(new FileReader(ruta));
-        reader.read();
-        Lexer lex = new Lexer(reader);
-        int i = 0;
-        Symbol token;
-        while(true) {
-            token = lex.next_token();
-            if (token.sym != 0) {
-                System.out.println("Token: " + token.sym + " " + (token.value==null?lex.yytext():token.value.toString()));
-            } else {
-                System.out.println("cantidad de lexemas encontrador: " + i);
-                return;
+    public static void test1(String ruta) throws FileNotFoundException, IOException, Exception {
+        try (Reader reader = new BufferedReader(new FileReader(ruta))) {
+            Lexer lex = new Lexer(reader);
+            int i = 0;
+            Symbol token;
+            while (true) {
+                token = lex.next_token();
+                if (token.sym != 0) {
+                    System.out.println("Token: " + token.sym + " " + (token.value == null ? lex.yytext() : token.value.toString()));
+                } else {
+                    System.out.println("Cantidad de lexemas encontrados: " + i);
+                    return;
+                }
+                i++;
             }
-            i++;
+        }
+    }
+    
+    public static void test2(String ruta) throws IOException, Exception {
+        try (Reader reader = new BufferedReader(new FileReader(ruta))) {
+            Lexer lex = new Lexer(reader);  // Crea un analizador léxico para el archivo
+            Parser myParser = new Parser(lex);  // Crea un analizador sintáctico y le pasa el analizador léxico
+            myParser.parse();  // Parsea el contenido del archivo
         }
     }
 }
