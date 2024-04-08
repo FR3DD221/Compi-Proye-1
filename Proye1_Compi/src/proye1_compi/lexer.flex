@@ -47,7 +47,7 @@ digitNoZero = [1-9]
 dot = "\."
 floatNum = ([0-9]*[.])?[0-9]+
 true = "true"
-
+Identifier = [A-Za-z]([A-Za-z0-9])*
 
 %state STRING
 
@@ -64,6 +64,7 @@ true = "true"
 <YYINITIAL> {true}               { System.out.println("true"); return symbol(sym.TRUE); }
 <YYINITIAL> "false"              { return symbol(sym.FALSE); }
 
+<YYINITIAL> "-"                  { return symbol(sym.MINUSW); }
 <YYINITIAL> "*"                  { return symbol(sym.PRODUCT); }
 <YYINITIAL> "/"                  { return symbol(sym.DIVISION); }
 <YYINITIAL> "^"                  { return symbol(sym.POWER); }
@@ -88,6 +89,7 @@ true = "true"
 <YYINITIAL> "<"                  { return symbol(sym.LOWER); }
 <YYINITIAL> ">="                 { return symbol(sym.GRATHERT); }
 <YYINITIAL> "<="                 { return symbol(sym.LOWERT); }
+<YYINITIAL> "=="                 { return symbol(sym.COMPARATION); }
 <YYINITIAL> "!="                 { return symbol(sym.DIFF); }
 <YYINITIAL> "!"                  { return symbol(sym.NEGATION); }
 <YYINITIAL> "&&"                 { return symbol(sym.AND); }
@@ -113,8 +115,6 @@ true = "true"
 
 
 <YYINITIAL> ";"                  { return symbol(sym.ENDEXPR); }
-
-
 
 <YYINITIAL> {
   /* identifiers */ 

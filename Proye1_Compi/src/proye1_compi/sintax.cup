@@ -20,26 +20,27 @@ scan with {:return lex.next_token();:};
 
 
 /* Terminals (tokens returned by the scanner). */
-terminal            SEMI, PLUS, MINUS, TIMES, UMINUS, PRODUCT, DIVISION, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
+terminal            IDENTIFIER, SEMI, PLUS, MINUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
-terminal            IDENTIFIER, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
-terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, AND, OR, SEP;
-terminal            FLOATNUM, INT, CHAR, FLOAT, BOOL;
+terminal            DELIMETERBLOCK, INT, CHAR, FLOAT, BOOL, FUNC, MAIN, PARAM, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
+terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, COMPARATION, AND, OR, SEP;
+terminal            FLOATNUM;
 terminal            TRUE, FALSE;
 terminal            IF, ELSE, WHILE, FOR, IN, RANGE, SWITCH, CASE;
-terminal            FUNC, MAIN, PARAM, LOC, GLOBAL, BRAKE, DEFAULT, RETURN, PRINT, READ;
-terminal            PARENTS, PARENTC, SQUARES, SQUAREC, DELIMETERBLOCK;
+terminal            LOC, GLOB, BRAKE, DEFAULT, RETURN, PRINT, INPUT;
+terminal            PARENTS, PARENTC, SQUARES, SQUAREC;
 terminal            ENDEXPR;
 
 /* Non terminals */
 non terminal            expr_list;
 non terminal Integer    expr;      // used to store evaluated subexpressions
-non terminal            SI, mathOP, varAsig, BLOCK;
-
+non terminal            SI, varIns, varAsig, BLOCK, compAritOp, factor, term, funcStruc, mainStruc, types;
+non terminal            ifStruc, ifElseStruc;
+non terminal            exprP, exprLog, exprUni, opRel, opLog;
 
 /* Precedences */
-precedence left PLUS, MINUS;
-precedence left TIMES;
+precedence left PLUS, MINUSW;
+precedence left PRODUCT;
 precedence left DIVISION;
 
 /* The grammar rules */    
@@ -48,17 +49,79 @@ start with SI;
 
 SI ::= BLOCK;
 
-BLOCK  ::=  SI mathOP
-       |SI varAsig
-       |mathOP  
-       |varAsig;    
+//Los distintos tipos que pueden tener una funcion o variable
+types ::= INT | CHAR | BOOL | FLOAT;
+
+//Bloque que se usa para el codigo siga un rumbo, vease como la lista de posibles expresiones
+BLOCK  ::=  SI exprP 
+       | SI varAsig 
+       | SI mainStruc
+       | SI funcStruc 
+       | SI varIns 
+       | SI ifStruc 
+       | SI ifElseStruc 
+       | exprP 
+       | mainStruc 
+       | funcStruc 
+       | varAsig    
+       | varIns 
+       | ifStruc 
+       | ifElseStruc;
+
+
+//Operaciones aritmeticas simples entre dos numeros
+/* Reglas de producción para operaciones aritméticas */
+compAritOp ::= term
+             | compAritOp PLUS term   {: System.out.println("Se hizo SUMA"); :}
+             | compAritOp MINUSW term  {: System.out.println("Se hizo RESTA"); :};
+
+term       ::= factor
+             | term PRODUCT factor  {: System.out.println("Se hizo PRODUCTO"); :}
+             | term DIVISION factor {: System.out.println("Se hizo COCIENTE"); :};
+
+factor     ::= INTEGER_LITERAL
+             | FLOATNUM
+             | STRING_LITERAL
+             | IDENTIFIER
+             | PARENTS compAritOp PARENTC;  
+
+
+//nuevo intento jiji
+exprP ::= exprLog 
+      | compAritOp        
+      | exprUni;
+
+exprLog ::= compAritOp opRel compAritOp
+        | PARENTS exprLog PARENTC
+        | TRUE
+        | FALSE;
+
+exprUni ::= exprLog opLog exprP       {: System.out.println("Se hizo 1"); :}
+        | IDENTIFIER opLog exprP                   {: System.out.println("Se hizo 2"); :}
+        | PARENTS exprUni PARENTC    {: System.out.println("Se hizo 3"); :};
+
+opRel ::= GRATHER | GRATHERT | LOWER | LOWERT | DIFF | COMPARATION;
+opLog ::= AND | OR;
+
+
+
+//Asignación de un valor a una variable
+varAsig      ::=
+             IDENTIFIER EQ exprP ENDEXPR       {:System.out.println("Se asigno int");:};
         
 
-mathOP       ::= mathOP PLUS mathOP        {:System.out.println("Se sumo");:}
-             | mathOP MINUS mathOP         {:System.out.println("Se resto");:}
-             | mathOP TIMES mathOP         {:System.out.println("Se multiplico");:}  
-             | mathOP DIVISION mathOP      {:System.out.println("Se dividio");:}                 
-             | INTEGER_LITERAL; 
+//Instanciacion simple de variables
+varIns       ::= LOC SEP types SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | GLOB SEP types SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:};
 
-varAsig      ::= IDENTIFIER EQ INTEGER_LITERAL ENDEXPR       {:System.out.println("Se asigno");:}
-                 |IDENTIFIER EQ STRING_LITERAL ENDEXPR       {:System.out.println("Se asigno");:};
+//Declaracion inicial del bloque para las funciones
+funcStruc    ::= FUNC SEP INT SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:System.out.println("Se declaro funcion normal");:}
+             | FUNC SEP CHAR SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro funcion normal");:}
+             | FUNC SEP BOOL SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro funcion normal");:}
+             | FUNC SEP FLOAT SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:System.out.println("Se declaro funcion normal");:}; 
+
+mainStruc    ::= FUNC SEP INT SEP MAIN DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:System.out.println("Se declaro funcion MAIN  ");:}; 
+
+
+ifStruc      ::= IF PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro estructura condicional IF");:};
+ifElseStruc  ::= ifStruc ELSE DELIMETERBLOCK BLOCK DELIMETERBLOCK;
