@@ -1,9 +1,11 @@
-((5+6) > 6)|| randall || (5+1 < randall)
-(randall || eandal && randall && (5+6 >6))
-(randal > "ewcdc")
+5-+++--2;
 
-x22<=45&&var>5.6
-12*15-5
+((5+6) > 6)|| randall || (5+1 < randall);
+(randall || eandal && randall && (5+6 >6));
+(randal > "ewcdc");
+
+x22<=45&&var>5.6;
+12*15-5;
 cant = 56*5234;
 cos =  "randall";
 cos =  x22<=45&&var>5.6;

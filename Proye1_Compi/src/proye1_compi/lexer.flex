@@ -48,6 +48,7 @@ dot = "\."
 floatNum = ([0-9]*[.])?[0-9]+
 true = "true"
 Identifier = [A-Za-z]([A-Za-z0-9])*
+minPls = ([+-])+
 
 %state STRING
 
@@ -68,6 +69,7 @@ Identifier = [A-Za-z]([A-Za-z0-9])*
 <YYINITIAL> "*"                  { return symbol(sym.PRODUCT); }
 <YYINITIAL> "/"                  { return symbol(sym.DIVISION); }
 <YYINITIAL> "^"                  { return symbol(sym.POWER); }
+<YYINITIAL> {minPls}                  { return symbol(sym.MINPLS); }
 <YYINITIAL> "_"                  { return symbol(sym.DELIMETERBLOCK); }
 <YYINITIAL> "%"                  { return symbol(sym.MODULUS); }
 <YYINITIAL> ":"                  { return symbol(sym.SEP); }

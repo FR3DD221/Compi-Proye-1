@@ -20,7 +20,7 @@ scan with {:return lex.next_token();:};
 
 
 /* Terminals (tokens returned by the scanner). */
-terminal            IDENTIFIER, SEMI, PLUS, MINUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
+terminal            IDENTIFIER, SEMI, PLUS, MINUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, MINPLS, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
 terminal            DELIMETERBLOCK, INT, CHAR, FLOAT, BOOL, FUNC, MAIN, PARAM, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
 terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, COMPARATION, AND, OR, SEP;
@@ -39,7 +39,7 @@ non terminal            ifStruc, ifElseStruc;
 non terminal            exprP, exprLog, exprUni, opRel, opLog;
 
 /* Precedences */
-precedence left PLUS, MINUSW;
+precedence left MINPLS, PLUS, MINUSW;
 precedence left PRODUCT;
 precedence left DIVISION;
 
@@ -53,14 +53,14 @@ SI ::= BLOCK;
 types ::= INT | CHAR | BOOL | FLOAT;
 
 //Bloque que se usa para el codigo siga un rumbo, vease como la lista de posibles expresiones
-BLOCK  ::=  SI exprP 
+BLOCK  ::=  SI exprP ENDEXPR
        | SI varAsig 
        | SI mainStruc
        | SI funcStruc 
        | SI varIns 
        | SI ifStruc 
        | SI ifElseStruc 
-       | exprP 
+       | exprP ENDEXPR
        | mainStruc 
        | funcStruc 
        | varAsig    
@@ -72,6 +72,7 @@ BLOCK  ::=  SI exprP
 //Operaciones aritmeticas simples entre dos numeros
 /* Reglas de producción para operaciones aritméticas */
 compAritOp ::= term
+             | compAritOp MINPLS term  {: System.out.println("Se hizo MULTIPLESIMB"); :}
              | compAritOp PLUS term   {: System.out.println("Se hizo SUMA"); :}
              | compAritOp MINUSW term  {: System.out.println("Se hizo RESTA"); :};
 
