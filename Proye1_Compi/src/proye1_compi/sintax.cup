@@ -67,6 +67,7 @@ BLOCK  ::=  SI exprP ENDEXPR
        | varIns 
        | ifStruc 
        | ifElseStruc;
+       | SWITCH;
 
 
 //Operaciones aritmeticas simples entre dos numeros
@@ -126,3 +127,9 @@ mainStruc    ::= FUNC SEP INT SEP MAIN DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:Sy
 
 ifStruc      ::= IF PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro estructura condicional IF");:};
 ifElseStruc  ::= ifStruc ELSE DELIMETERBLOCK BLOCK DELIMETERBLOCK;
+
+//Declaracion de switch
+switch ::= PARENTS exprP PARENTC DELIMITERBLOCK CASE BREAK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura switch");:};
+case ::= CASE
+        | CASE CASE
+break ::= CASE exprP SEP DELIMITERBLOCK BLOCK DELIMITERBLOCK BREAK ENDEXPR
