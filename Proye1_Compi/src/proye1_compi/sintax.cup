@@ -140,5 +140,5 @@ break ::= CASE exprP SEP DELIMITERBLOCK BLOCK DELIMITERBLOCK BREAK
 
 
 //Declaracion del for
-for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDENTIFIER unaryOp PARENTC DELIMITERBLOCK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura switch");:};
+for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDENTIFIER unaryOp PARENTC DELIMITERBLOCK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura for");:};
 
