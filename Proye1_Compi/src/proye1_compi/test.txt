@@ -26,12 +26,3 @@ func:int:fun1_ cos = "df"; _
 func:int:fun3_ cos = "df"; _
 
 if(true)_cos = 5 < 7;_
-
-switch (1)_
-    case 1:
-        break
-    case 2:
-        break
-    default:
-        break
-_

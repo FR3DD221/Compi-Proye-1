@@ -69,6 +69,7 @@ BLOCK  ::=  SI exprP ENDEXPR
        | ifElseStruc;
        | switch;
        | for;
+       | while;
 
         
 
@@ -140,5 +141,7 @@ break ::= CASE exprP SEP DELIMITERBLOCK BLOCK DELIMITERBLOCK BREAK
 
 
 //Declaracion del for
-for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDENTIFIER unaryOp PARENTC DELIMITERBLOCK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura for");:};
+for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDENTIFIER unaryOp PARENTC DELIMITERBLOCK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro ciclo for");:};
 
+//Produccion while
+while      ::= WHILE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro el ciclo while");:};
