@@ -19,7 +19,7 @@ init with {::};
 scan with {:return lex.next_token();:};
 
 
-/* Terminals (tokens returned by the scanner). */
+/* Terminales (tokens returned by the scanner). */
 terminal            IDENTIFIER, SEMI, PLUS, MINUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, MINPLS, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
 terminal            DELIMETERBLOCK, INT, CHAR, FLOAT, BOOL, FUNC, MAIN, PARAM, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
@@ -31,14 +31,14 @@ terminal            LOC, GLOB, BRAKE, DEFAULT, RETURN, PRINT, INPUT;
 terminal            PARENTS, PARENTC, SQUARES, SQUAREC;
 terminal            ENDEXPR;
 
-/* Non terminals */
+/* No terminales */
 non terminal            expr_list;
-non terminal Integer    expr;      // used to store evaluated subexpressions
+non terminal            Integer expr;// used to store evaluated subexpressions
 non terminal            SI, varIns, varAsig, BLOCK, compAritOp, factor, term, funcStruc, mainStruc, types;
 non terminal            ifStruc, ifElseStruc;
 non terminal            exprP, exprLog, exprUni, opRel, opLog;
 
-/* Precedences */
+/* Orden de precedencia */
 precedence left MINPLS, PLUS, MINUSW;
 precedence left PRODUCT;
 precedence left DIVISION;
@@ -70,6 +70,8 @@ BLOCK  ::=  SI exprP ENDEXPR
        | switch;
        | for;
        | while;
+       | array;
+
 
         
 
@@ -145,3 +147,7 @@ for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDE
 
 //Produccion while
 while      ::= WHILE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro el ciclo while");:};
+
+//Arreglos
+array ::= ARRAY PARENTS INT PARENTC {:System.out.println("Se declaro un arreglo");:};
+         |ARRAY PARENTS FLOAT PARENTC {:System.out.println("Se declaro un arreglo");:};                
