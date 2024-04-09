@@ -67,7 +67,10 @@ BLOCK  ::=  SI exprP ENDEXPR
        | varIns 
        | ifStruc 
        | ifElseStruc;
-       | SWITCH;
+       | switch;
+       | for;
+
+        
 
 
 //Operaciones aritmeticas simples entre dos numeros
@@ -103,6 +106,7 @@ exprUni ::= exprLog opLog exprP       {: System.out.println("Se hizo 1"); :}
         | PARENTS exprUni PARENTC    {: System.out.println("Se hizo 3"); :};
 
 opRel ::= GRATHER | GRATHERT | LOWER | LOWERT | DIFF | COMPARATION;
+unaryOp ::= PLUS PLUS | MINUS MINUS
 opLog ::= AND | OR;
 
 
@@ -129,7 +133,12 @@ ifStruc      ::= IF PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   
 ifElseStruc  ::= ifStruc ELSE DELIMETERBLOCK BLOCK DELIMETERBLOCK;
 
 //Declaracion de switch
-switch ::= PARENTS exprP PARENTC DELIMITERBLOCK CASE BREAK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura switch");:};
+switch ::= SWITCH PARENTS exprP PARENTC DELIMITERBLOCK CASE BREAK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura switch");:};
 case ::= CASE
         | CASE CASE
-break ::= CASE exprP SEP DELIMITERBLOCK BLOCK DELIMITERBLOCK BREAK ENDEXPR
+break ::= CASE exprP SEP DELIMITERBLOCK BLOCK DELIMITERBLOCK BREAK 
+
+
+//Declaracion del for
+for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDENTIFIER unaryOp PARENTC DELIMITERBLOCK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura switch");:};
+
