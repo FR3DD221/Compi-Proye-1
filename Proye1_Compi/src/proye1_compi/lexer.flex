@@ -50,6 +50,7 @@ true = "true"
 Identifier = [A-Za-z]([A-Za-z0-9])*
 minPls = ([+-])+
 
+
 %state STRING
 
 %%
@@ -78,6 +79,7 @@ minPls = ([+-])+
 <YYINITIAL> "float"              { return symbol(sym.FLOAT); }
 <YYINITIAL> "boolean"            { return symbol(sym.BOOL); }
 <YYINITIAL> "string"             { return symbol(sym.STRINGT); }
+<YYINITIAL> "array"              { return symbol(sym.ARRAY); }
 <YYINITIAL> "if"                 { return symbol(sym.IF); }
 <YYINITIAL> "else"               { return symbol(sym.ELSE); }
 
@@ -115,7 +117,6 @@ minPls = ([+-])+
 <YYINITIAL> "brake"              { return symbol(sym.BRAKE); }
 <YYINITIAL> "print"              { return symbol(sym.PRINT); }
 <YYINITIAL> "input"              { return symbol(sym.INPUT); }
-
 
 
 <YYINITIAL> ";"                  { return symbol(sym.ENDEXPR); }

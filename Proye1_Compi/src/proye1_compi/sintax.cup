@@ -22,11 +22,11 @@ scan with {:return lex.next_token();:};
 /* Terminales (tokens returned by the scanner). */
 terminal            IDENTIFIER, SEMI, PLUS, MINUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, MINPLS, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
-terminal            DELIMETERBLOCK, INT, CHAR, FLOAT, BOOL, STRINGT, FUNC, MAIN, PARAM, COMA, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
+terminal            DELIMETERBLOCK, ASIGNINTSARRAY, ASIGNCHARSARRAY, INT, CHAR, FLOAT, BOOL, STRINGT, FUNC, MAIN, PARAM, COMA, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
 terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, COMPARATION, AND, OR, SEP;
 terminal            FLOATNUM;
 terminal            TRUE, FALSE;
-terminal            IF, ELSE, WHILE, FOR, IN, RANGE, SWITCH, CASE;
+terminal            IF, ELSE, WHILE, FOR, IN, RANGE, SWITCH, CASE, ARRAY;
 terminal            LOC, GLOB, BRAKE, DEFAULT, RETURN, PRINT, INPUT;
 terminal            PARENTS, PARENTC, SQUARES, SQUAREC;
 terminal            ENDEXPR;
@@ -35,8 +35,8 @@ terminal            ENDEXPR;
 non terminal            expr_list;
 non terminal            Integer expr;// used to store evaluated subexpressions
 non terminal            SI, varIns, varAsig, BLOCK, compAritOp, factor, term, funcStruc, mainStruc, types;
-non terminal            ifStruc, ifElseStruc;
-non terminal            exprP, exprLog, exprUni, opRel, opLog;
+non terminal            ifStruc, ifElseStruc, whileStruc, arrayIns, arrayAsig, arrayInsAsign, elementos, switchStruc, caseStruc;
+non terminal            exprP, exprLog, exprUni, opRel, opLog, arrayElement;
 
 /* Orden de precedencia */
 precedence left MINPLS, PLUS, MINUSW;
@@ -50,27 +50,31 @@ start with SI;
 SI ::= BLOCK;
 
 //Los distintos tipos que pueden tener una funcion o variable
-types ::= INT | CHAR | BOOL | FLOAT;
 
 //Bloque que se usa para el codigo siga un rumbo, vease como la lista de posibles expresiones
-BLOCK  ::=  SI exprP ENDEXPR
-       | SI varAsig 
-       | SI mainStruc
-       | SI funcStruc 
-       | SI varIns 
-       | SI ifStruc 
-       | SI ifElseStruc 
+BLOCK  ::=  BLOCK exprP ENDEXPR
+       | BLOCK varAsig 
+       | BLOCK mainStruc
+       | BLOCK funcStruc 
+       | BLOCK varIns 
+       | BLOCK ifStruc 
+       | BLOCK ifElseStruc 
+       | BLOCK whileStruc 
+       | BLOCK switchStruc 
+       | BLOCK arrayIns ENDEXPR
+       | BLOCK arrayInsAsign ENDEXPR
        | exprP ENDEXPR
+       | arrayIns ENDEXPR
+       | arrayInsAsign ENDEXPR
        | mainStruc 
        | funcStruc 
        | varAsig    
        | varIns 
        | ifStruc 
-       | ifElseStruc;
-       | switch;
-       | for;
-       | while;
-       | array;
+       | ifElseStruc
+       | switchStruc
+       //| for
+       | whileStruc;
 
 
         
@@ -91,10 +95,11 @@ factor     ::= INTEGER_LITERAL
              | FLOATNUM
              | STRING_LITERAL
              | IDENTIFIER
+             | arrayElement
              | PARENTS compAritOp PARENTC;  
 
 
-//nuevo intento jiji
+//Manejo de distintas expresiones de comparacion y union
 exprP ::= exprLog 
       | compAritOp        
       | exprUni;
@@ -112,7 +117,6 @@ exprUni ::= exprLog opLog exprP       {: System.out.println("Se hizo 1"); :}
         | PARENTS exprUni PARENTC    {: System.out.println("Se hizo 3"); :};
 
 opRel ::= GRATHER | GRATHERT | LOWER | LOWERT | DIFF | COMPARATION;
-unaryOp ::= PLUS PLUS | MINUS MINUS
 opLog ::= AND | OR;
 
 
@@ -123,8 +127,14 @@ varAsig      ::=
         
 
 //Instanciacion simple de variables
-varIns       ::= LOC SEP types SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
-             | GLOB SEP types SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:};
+varIns       ::= LOC SEP INT SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | LOC SEP CHAR SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | LOC SEP FLOAT SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | LOC SEP BOOL SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | GLOB SEP INT SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
+             | GLOB SEP CHAR SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
+             | GLOB SEP FLOAT SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
+             | GLOB SEP BOOL SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:};
 
 //Declaracion inicial del bloque para las funciones
 funcStruc    ::= FUNC SEP INT SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:System.out.println("Se declaro funcion normal");:}
@@ -138,19 +148,32 @@ mainStruc    ::= FUNC SEP INT SEP MAIN DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:Sy
 ifStruc      ::= IF PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro estructura condicional IF");:};
 ifElseStruc  ::= ifStruc ELSE DELIMETERBLOCK BLOCK DELIMETERBLOCK;
 
+//Produccion while
+whileStruc   ::= WHILE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro el ciclo while");:};
+
+
+//Declaracion, asignacion y acceso a un array
+arrayIns ::=  LOC SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
+            | LOC SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
+            | GLOB SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
+            | GLOB SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
+
+arrayAsig ::= EQ SQUARES elementos SQUAREC;
+
+elementos ::= compAritOp COMA elementos| compAritOp;
+
+arrayInsAsign ::= arrayIns arrayAsig;
+
+arrayElement ::= IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
+
+
 //Declaracion de switch
-switch ::= SWITCH PARENTS exprP PARENTC DELIMITERBLOCK CASE BREAK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura switch");:};
-case ::= CASE
-        | CASE CASE
-break ::= CASE exprP SEP DELIMITERBLOCK BLOCK DELIMITERBLOCK BREAK 
+switchStruc ::= SWITCH PARENTS IDENTIFIER PARENTC DELIMETERBLOCK caseStruc DEFAULT SEP BLOCK DELIMETERBLOCK {:System.out.println("Se declaro estructura switch");:};
+caseStruc ::= CASE SEP compAritOp SEP BLOCK BREAK ENDEXPR caseStruc
+          | CASE SEP compAritOp SEP BLOCK BREAK ENDEXPR;
 
-
+/*
 //Declaracion del for
 for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDENTIFIER unaryOp PARENTC DELIMITERBLOCK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro ciclo for");:};
+*/       
 
-//Produccion while
-while      ::= WHILE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro el ciclo while");:};
-
-//Arreglos
-array ::= ARRAY PARENTS INT PARENTC {:System.out.println("Se declaro un arreglo");:};
-         |ARRAY PARENTS FLOAT PARENTC {:System.out.println("Se declaro un arreglo");:};                
