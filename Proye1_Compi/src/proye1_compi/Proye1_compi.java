@@ -47,10 +47,11 @@ public class Proye1_compi {
         Files.move(Paths.get(ParserLocation), Paths.get(pard1), StandardCopyOption.REPLACE_EXISTING);
         
         test1("D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\test.txt");
-        test2("D:\\\\CompiladoresEInterpretes\\\\Compi-Proye-1\\\\Proye1_Compi\\\\src\\\\proye1_compi\\\\test.txt");
+        test2("D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\test.txt");
     }
     
     public static void generarLexer(String path) throws SilentExit, IOException {
+        System.out.println("Generando Lexer...");
         try{
             String[] strArr =  {path};
             jflex.Main.generate(strArr);
@@ -60,6 +61,7 @@ public class Proye1_compi {
     }
     
     public static void generarParser(String path) throws IOException, Exception {
+        System.out.println("Generando Parser...");
         try{
             String[] strArr = { "-parser", "Parser", path };
             java_cup.Main.main(strArr);
