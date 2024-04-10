@@ -10,6 +10,15 @@ parser code {:
         this.lex = lex;
         this.symbolFactory = new DefaultSymbolFactory();
     }
+    //recuperacion de errores de sintaxis
+    public void syntax_error(Symbol s) {
+        System.out.println("!!Error de Sintaxis en : " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
+    }
+
+    //manejo de errores fatales
+    public void unrecovered_syntax_error(Symbol s) {
+        System.out.println("!!Error fatal en : " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
+    } 
 :}
 
 /* define how to connect to the scanner! */
@@ -75,9 +84,6 @@ BLOCK  ::=  BLOCK exprP ENDEXPR
        | switchStruc
        //| for
        | whileStruc;
-
-
-        
 
 
 //Operaciones aritmeticas simples entre dos numeros

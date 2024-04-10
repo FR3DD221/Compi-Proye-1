@@ -153,3 +153,6 @@ minPls = ([+-])+
   \\\"                           { string.append('\"'); }
   \\                             { string.append('\\'); }
 }
+
+/* Manejo de errores */
+[^] { throw new RuntimeException("Carácter no válido: " + yytext()); }
