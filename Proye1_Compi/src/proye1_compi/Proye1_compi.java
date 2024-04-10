@@ -18,8 +18,9 @@ import static jflex.logging.Out.println;
 public class Proye1_compi {
     public static void main(String[] args) throws SilentExit, Exception {
         // TODO code application logic here
-        String path = "D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\lexer.flex";
-        String path2 = "D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\sintax.cup";
+        String path= "D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\lexer.flex";
+        String path2= "D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\sintax.cup";
+        
         generarLexer(path);
         generarParser(path2);
         
@@ -50,14 +51,21 @@ public class Proye1_compi {
     }
     
     public static void generarLexer(String path) throws SilentExit, IOException {
-        String[] strArr =  {path};
-        jflex.Main.generate(strArr);
+        try{
+            String[] strArr =  {path};
+            jflex.Main.generate(strArr);
+        } catch(SilentExit e){
+            System.err.println("Error al generar el lexer: " + e.getMessage());
+        }
     }
     
-    
     public static void generarParser(String path) throws IOException, Exception {
-        String[] strArr = { "-parser", "Parser", path };
-        java_cup.Main.main(strArr);
+        try{
+            String[] strArr = { "-parser", "Parser", path };
+            java_cup.Main.main(strArr);
+        } catch (Exception e){
+            System.err.println("Error inesperado durante la generacion del parser " + e.getMessage());
+        }
     }
     
     public static void test1(String ruta) throws FileNotFoundException, IOException, Exception {

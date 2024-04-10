@@ -115,7 +115,6 @@ minPls = ([+-])+
 <YYINITIAL> "input"              { return symbol(sym.INPUT); }
 
 
-
 <YYINITIAL> ";"                  { return symbol(sym.ENDEXPR); }
 
 <YYINITIAL> {
@@ -150,3 +149,6 @@ minPls = ([+-])+
   \\\"                           { string.append('\"'); }
   \\                             { string.append('\\'); }
 }
+
+/* Manejo de errores */
+[^] { throw new RuntimeException("Carácter no válido: " + yytext()); }
