@@ -624,6 +624,7 @@ return lex.next_token();
     }
     //recuperacion de errores de sintaxis
     public void syntax_error(Symbol s) {
+<<<<<<< Updated upstream
         System.out.println("!!Error de Sintaxis en : " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
     }
 
@@ -631,6 +632,27 @@ return lex.next_token();
     public void unrecovered_syntax_error(Symbol s) {
         System.out.println("!!Error fatal en : " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
     } 
+=======
+        System.out.println("Error de Sintaxis en línea " + (s.left + 1) + ", columna " + (s.right + 1) + ": " + 
+                           "Se encontró '" + s.value + "' pero se esperaba otra cosa.");
+        // Mostrar la línea con una indicación visual de la posición del error
+        
+        System.out.println(s.left);
+        // Mostrar una flecha que apunte a la columna del error
+        int errorColumn = s.right + 1;
+        for (int i = 0; i < errorColumn - 1; i++) {
+            System.out.print(" ");
+        }
+        System.out.println("^");
+    }
+
+    public void unrecovered_syntax_error(Symbol s) {
+        System.out.println("Error fatal de Sintaxis en línea " + (s.left + 1) + ", columna " + (s.right + 1) + ": " + 
+                           "No se pudo recuperar del error.");
+        // Mostrar la línea con una indicación visual de la posición del error
+        System.out.println(s.left);
+    }
+>>>>>>> Stashed changes
 
 
 /** Cup generated class to encapsulate user supplied action code.*/

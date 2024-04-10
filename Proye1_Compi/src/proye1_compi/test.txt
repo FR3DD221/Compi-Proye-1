@@ -40,4 +40,4 @@ func:int:fun1_ cos = "df"; _
 func:int:fun3_ cos = "df"; _
 
 if(true)_cos = 5 < 7;_
-while(true)_cos = 5 < 7;_
+while(true)_cos = 5 < 7;
