@@ -622,6 +622,15 @@ return lex.next_token();
         this.lex = lex;
         this.symbolFactory = new DefaultSymbolFactory();
     }
+    //recuperacion de errores de sintaxis
+    public void syntax_error(Symbol s) {
+        System.out.println("!!Error de Sintaxis en : " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
+    }
+
+    //manejo de errores fatales
+    public void unrecovered_syntax_error(Symbol s) {
+        System.out.println("!!Error fatal en : " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
+    } 
 
 
 /** Cup generated class to encapsulate user supplied action code.*/

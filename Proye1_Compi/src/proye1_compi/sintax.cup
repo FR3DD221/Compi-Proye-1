@@ -184,63 +184,63 @@ for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDE
 */       
 
 //Manejo de errores
-error :
-    | error SEMI { System.out.println("Error de sintaxis: se esperaba ; "); }
-    | error ENDEXPR { System.out.println("Error de sintaxis: se esperaba ; "); }
-    | error SEP { System.out.println("Error de sintaxis: se esperaba : "); }
-    | error IDENTIFIER { System.out.println("Error de sintaxis: se esperaba un identificador "); }
-    | error PLUS { System.out.println("Error de sintaxis: se esperaba + "); }
-    | error MINUSW { System.out.println("Error de sintaxis: se esperaba - "); }
-    | error PRODUCT { System.out.println("Error de sintaxis: se esperaba * "); }
-    | error DIVISION { System.out.println("Error de sintaxis: se esperaba / "); }
-    | error POWER { System.out.println("Error de sintaxis: se esperaba ^ "); }
-    | error MODULUS { System.out.println("Error de sintaxis: se esperaba % "); }
-    | error STRING { System.out.println("Error de sintaxis: se esperaba un string "); }
-    | error EQ { System.out.println("Error de sintaxis: se esperaba = "); }
-    | error EQEQ { System.out.println("Error de sintaxis: se esperaba == "); }
-    | error ABSTRACT { System.out.println("Error de sintaxis: se esperaba una expresion abstracta "); }
-    | error BOOLEAN { System.out.println("Error de sintaxis: se esperaba una expresion booleana "); }
-    | error INT { System.out.println("Error de sintaxis: se esperaba int "); }
-    | error CHAR { System.out.println("Error de sintaxis: se esperaba char "); }
-    | error FLOAT { System.out.println("Error de sintaxis: se esperaba float "); }
-    | error BOOL { System.out.println("Error de sintaxis: se esperaba bool "); }
-    | error BREAK { System.out.println("Error de sintaxis: se esperaba break "); }
-    | error DOT { System.out.println("Error de sintaxis: se esperaba . "); }
-    | error INTEGER_LITERAL { System.out.println("Error de sintaxis: La expresion no corresponde con un numero "); }
-    | error FLOATNUM { System.out.println("Error de sintaxis: La expresion debe ser un numero flotante "); }
-    | error TRUE { System.out.println("Error de sintaxis: se esperaba true "); }
-    | error FALSE { System.out.println("Error de sintaxis: se esperaba false "); }
-    | error DELIMETERBLOCK { System.out.println("Error de sintaxis: se esperaba _ "); }
-    | error IF { System.out.println("Error de sintaxis: se esperaba if "); }
-    | error ELSE { System.out.println("Error de sintaxis: se esperaba else "); }
-    | error SWITCH { System.out.println("Error de sintaxis: se esperaba switch "); }
-    | error CASE { System.out.println("Error de sintaxis: se esperaba case "); }
-    | error FOR { System.out.println("Error de sintaxis: se esperaba for "); }
-    | error WHILE { System.out.println("Error de sintaxis: se esperaba while "); }
-    | error IN { System.out.println("Error de sintaxis: se esperaba in "); }
-    | error RANGE { System.out.println("Error de sintaxis: se esperaba range "); }
-    | error GRATHER { System.out.println("Error de sintaxis: se esperaba > "); }
-    | error LOWER { System.out.println("Error de sintaxis: se esperaba < "); }
-    | error GRATHERT { System.out.println("Error de sintaxis: se esperaba >= "); }
-    | error LOWERT { System.out.println("Error de sintaxis: se esperaba <= "); }
-    | error COMPARATION { System.out.println("Error de sintaxis: se esperaba == "); }
-    | error DIFF { System.out.println("Error de sintaxis: se esperaba != "); }
-    | error NEGATION { System.out.println("Error de sintaxis: se esperaba ! "); }
-    | error AND { System.out.println("Error de sintaxis: se esperaba && "); }
-    | error OR { System.out.println("Error de sintaxis: se esperaba || "); }
-    | error FUNC { System.out.println("Error de sintaxis: se esperaba func "); }
-    | error MAIN { System.out.println("Error de sintaxis: se esperaba main "); }
-    | error PARAM { System.out.println("Error de sintaxis: se esperaba un parametro "); }
-    | error PARENTS { System.out.println("Error de sintaxis: se esperaba ( "); }
-    | error PARENTC { System.out.println("Error de sintaxis: se esperaba ) "); }
-    | error SQUARES { System.out.println("Error de sintaxis: se esperaba [ "); }
-    | error SQUAREC { System.out.println("Error de sintaxis: se esperaba ] "); }
-    | error LOC { System.out.println("Error de sintaxis: se esperaba loc "); }
-    | error GLOB { System.out.println("Error de sintaxis: se esperaba glob "); }
-    | error RETURN { System.out.println("Error de sintaxis: se esperaba return "); }
-    | error DEFAULT { System.out.println("Error de sintaxis: se esperaba default "); }
-    | error BRAKE { System.out.println("Error de sintaxis: se esperaba brake "); }
-    | error PRINT { System.out.println("Error de sintaxis: se esperaba print "); }
-    | error INPUT { System.out.println("Error de sintaxis: se esperaba input "); }
-;
+error ::= 
+    error SEMI {: System.out.println("Error de sintaxis: se esperaba ; "); :}
+    | error ENDEXPR {: System.out.println("Error de sintaxis: se esperaba ; "); :}
+    | error SEP {: System.out.println("Error de sintaxis: se esperaba : "); :}
+    | error IDENTIFIER {: System.out.println("Error de sintaxis: se esperaba un identificador "); :}
+    | error PLUS {: System.out.println("Error de sintaxis: se esperaba + "); :}
+    | error MINUSW {: System.out.println("Error de sintaxis: se esperaba - "); :}
+    | error PRODUCT {: System.out.println("Error de sintaxis: se esperaba * "); :}
+    | error DIVISION {: System.out.println("Error de sintaxis: se esperaba / "); :}
+    | error POWER {: System.out.println("Error de sintaxis: se esperaba ^ "); :}
+    | error MODULUS {: System.out.println("Error de sintaxis: se esperaba % "); :}
+    | error STRINGT {: System.out.println("Error de sintaxis: se esperaba un string "); :}
+    | error EQ {: System.out.println("Error de sintaxis: se esperaba = "); :}
+    | error EQEQ {: System.out.println("Error de sintaxis: se esperaba == "); :}
+    | error ABSTRACT {: System.out.println("Error de sintaxis: se esperaba una expresion abstracta "); :}
+    | error BOOLEAN {: System.out.println("Error de sintaxis: se esperaba una expresion booleana "); :}
+    | error INT {: System.out.println("Error de sintaxis: se esperaba int "); :}
+    | error CHAR {: System.out.println("Error de sintaxis: se esperaba char "); :}
+    | error FLOAT {: System.out.println("Error de sintaxis: se esperaba float "); :}
+    | error BOOL {: System.out.println("Error de sintaxis: se esperaba bool "); :}
+    | error BREAK {: System.out.println("Error de sintaxis: se esperaba break "); :}
+    | error DOT {: System.out.println("Error de sintaxis: se esperaba . "); :}
+    | error INTEGER_LITERAL {: System.out.println("Error de sintaxis: La expresion no corresponde con un numero "); :}
+    | error FLOATNUM {: System.out.println("Error de sintaxis: La expresion debe ser un numero flotante "); :}
+    | error TRUE {: System.out.println("Error de sintaxis: se esperaba true "); :}
+    | error FALSE {: System.out.println("Error de sintaxis: se esperaba false "); :}
+    | error DELIMETERBLOCK {: System.out.println("Error de sintaxis: se esperaba _ "); :}
+    | error IF {: System.out.println("Error de sintaxis: se esperaba if "); :}
+    | error ELSE {: System.out.println("Error de sintaxis: se esperaba else "); :}
+    | error SWITCH {: System.out.println("Error de sintaxis: se esperaba switch "); :}
+    | error CASE {: System.out.println("Error de sintaxis: se esperaba case "); :}
+    | error FOR {: System.out.println("Error de sintaxis: se esperaba for "); :}
+    | error WHILE {: System.out.println("Error de sintaxis: se esperaba while "); :}
+    | error IN {: System.out.println("Error de sintaxis: se esperaba in "); :}
+    | error RANGE {: System.out.println("Error de sintaxis: se esperaba range "); :}
+    | error GRATHER {: System.out.println("Error de sintaxis: se esperaba > "); :}
+    | error LOWER {: System.out.println("Error de sintaxis: se esperaba < "); :}
+    | error GRATHERT {: System.out.println("Error de sintaxis: se esperaba >= "); :}
+    | error LOWERT {: System.out.println("Error de sintaxis: se esperaba <= "); :}
+    | error COMPARATION {: System.out.println("Error de sintaxis: se esperaba == "); :}
+    | error DIFF {: System.out.println("Error de sintaxis: se esperaba != "); :}
+    | error NEGATION {: System.out.println("Error de sintaxis: se esperaba ! "); :}
+    | error AND {: System.out.println("Error de sintaxis: se esperaba && "); :}
+    | error OR {: System.out.println("Error de sintaxis: se esperaba || "); :}
+    | error FUNC {: System.out.println("Error de sintaxis: se esperaba func "); :}
+    | error MAIN {: System.out.println("Error de sintaxis: se esperaba main "); :}
+    | error PARAM {: System.out.println("Error de sintaxis: se esperaba un parametro "); :}
+    | error PARENTS {: System.out.println("Error de sintaxis: se esperaba ( "); :}
+    | error PARENTC {: System.out.println("Error de sintaxis: se esperaba ) "); :}
+    | error SQUARES {: System.out.println("Error de sintaxis: se esperaba [ "); :}
+    | error SQUAREC {: System.out.println("Error de sintaxis: se esperaba ] "); :}
+    | error LOC {: System.out.println("Error de sintaxis: se esperaba loc "); :}
+    | error GLOB {: System.out.println("Error de sintaxis: se esperaba glob "); :}
+    | error RETURN {: System.out.println("Error de sintaxis: se esperaba return "); :}
+    | error DEFAULT {: System.out.println("Error de sintaxis: se esperaba default "); :}
+    | error BRAKE {: System.out.println("Error de sintaxis: se esperaba brake "); :}
+    | error PRINT {: System.out.println("Error de sintaxis: se esperaba print "); :}
+    | error INPUT {: System.out.println("Error de sintaxis: se esperaba input "); :};
+
 
