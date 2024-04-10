@@ -57,13 +57,13 @@ minPls = ([+-])+
 
 /* keywords */
 <YYINITIAL> "abstract"           { return symbol(sym.ABSTRACT); }
-<YYINITIAL> "boolean"            { return symbol(sym.BOOLEAN); }
+<YYINITIAL> "boolean"            { return symbol(sym.BOOLEAN, yyline, yycolumn, yytext()); }
 <YYINITIAL> "break"              { return symbol(sym.BREAK); }
 
-<YYINITIAL> {dot}                { System.out.println("punto"); return symbol(sym.DOT); }
+<YYINITIAL> {dot}                { System.out.println("punto"); return symbol(sym.DOT, yyline, yycolumn, yytext()); }
 <YYINITIAL> {DecIntegerLiteral}  { return symbol(sym.INTEGER_LITERAL); }
 <YYINITIAL> {floatNum}           { System.out.println("flotante"); return symbol(sym.FLOATNUM); }
-<YYINITIAL> {true}               { System.out.println("true"); return symbol(sym.TRUE); }
+<YYINITIAL> "true"               { System.out.println("true"); return symbol(sym.TRUE); }
 <YYINITIAL> "false"              { return symbol(sym.FALSE); }
 
 <YYINITIAL> "-"                  { return symbol(sym.MINUSW); }

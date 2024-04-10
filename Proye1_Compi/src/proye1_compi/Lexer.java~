@@ -911,7 +911,7 @@ class Lexer implements java_cup.runtime.Scanner {
           // fall through
           case 77: break;
           case 12:
-            { System.out.println("punto"); return symbol(sym.DOT);
+            { System.out.println("punto"); return symbol(sym.DOT, yyline, yycolumn, yytext());
             }
           // fall through
           case 78: break;
@@ -1173,7 +1173,7 @@ class Lexer implements java_cup.runtime.Scanner {
           // fall through
           case 129: break;
           case 64:
-            { return symbol(sym.BOOLEAN);
+            { return symbol(sym.BOOLEAN, yyline, yycolumn, yytext());
             }
           // fall through
           case 130: break;
