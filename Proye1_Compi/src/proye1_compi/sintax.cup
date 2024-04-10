@@ -31,7 +31,7 @@ scan with {:return lex.next_token();:};
 /* Terminales (tokens returned by the scanner). */
 terminal            IDENTIFIER, SEMI, PLUS, MINUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, MINPLS, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
-terminal            DELIMETERBLOCK, INT, CHAR, FLOAT, BOOL, FUNC, MAIN, PARAM, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
+terminal            DELIMETERBLOCK, INT, CHAR, FLOAT, BOOL, STRINGT, FUNC, MAIN, PARAM, COMA, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
 terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, COMPARATION, AND, OR, SEP;
 terminal            FLOATNUM;
 terminal            TRUE, FALSE;
@@ -107,6 +107,9 @@ exprP ::= exprLog
 
 exprLog ::= compAritOp opRel compAritOp
         | PARENTS exprLog PARENTC
+        | MINUSW compAritOp 
+        | PLUS compAritOp 
+        | MINPLS compAritOp 
         | TRUE
         | FALSE;
 
@@ -122,7 +125,7 @@ opLog ::= AND | OR;
 
 //Asignación de un valor a una variable
 varAsig      ::=
-             IDENTIFIER EQ exprP ENDEXPR       {:System.out.println("Se asigno int");:};
+             IDENTIFIER EQ exprP ENDEXPR       {:System.out.println("Se asigno VAR");:};
         
 
 //Instanciacion simple de variables

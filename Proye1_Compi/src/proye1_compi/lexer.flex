@@ -69,14 +69,15 @@ minPls = ([+-])+
 <YYINITIAL> "*"                  { return symbol(sym.PRODUCT); }
 <YYINITIAL> "/"                  { return symbol(sym.DIVISION); }
 <YYINITIAL> "^"                  { return symbol(sym.POWER); }
-<YYINITIAL> {minPls}                  { return symbol(sym.MINPLS); }
+<YYINITIAL> {minPls}             { return symbol(sym.MINPLS); }
 <YYINITIAL> "_"                  { return symbol(sym.DELIMETERBLOCK); }
 <YYINITIAL> "%"                  { return symbol(sym.MODULUS); }
 <YYINITIAL> ":"                  { return symbol(sym.SEP); }
 <YYINITIAL> "int"                { return symbol(sym.INT); }
 <YYINITIAL> "char"               { return symbol(sym.CHAR); }
 <YYINITIAL> "float"              { return symbol(sym.FLOAT); }
-<YYINITIAL> "bool"               { return symbol(sym.BOOL); }
+<YYINITIAL> "boolean"            { return symbol(sym.BOOL); }
+<YYINITIAL> "string"             { return symbol(sym.STRINGT); }
 <YYINITIAL> "if"                 { return symbol(sym.IF); }
 <YYINITIAL> "else"               { return symbol(sym.ELSE); }
 
@@ -101,6 +102,7 @@ minPls = ([+-])+
 <YYINITIAL> "func"               { return symbol(sym.FUNC); }
 <YYINITIAL> "main"               { return symbol(sym.MAIN); }
 <YYINITIAL> "param"              { return symbol(sym.PARAM); }
+<YYINITIAL> ","                  { return symbol(sym.COMA); }
 <YYINITIAL> "("                  { return symbol(sym.PARENTS); }
 <YYINITIAL> ")"                  { return symbol(sym.PARENTC); }
 
