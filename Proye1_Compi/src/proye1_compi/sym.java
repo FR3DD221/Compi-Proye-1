@@ -8,71 +8,75 @@ package proye1_compi;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int SEP = 43;
-  public static final int STRING_LITERAL = 27;
+  public static final int SEP = 46;
+  public static final int STRING_LITERAL = 30;
   public static final int POWER = 12;
-  public static final int CHAR = 20;
+  public static final int CHAR = 22;
   public static final int UMINUS = 8;
-  public static final int INPUT = 61;
-  public static final int CASE = 54;
-  public static final int LOWER = 38;
+  public static final int INPUT = 65;
+  public static final int CASE = 57;
+  public static final int LOWER = 41;
   public static final int LPAREN = 14;
   public static final int SEMI = 3;
-  public static final int INT = 19;
+  public static final int INT = 21;
+  public static final int ARRAY = 58;
   public static final int PRODUCT = 9;
-  public static final int GRATHERT = 37;
-  public static final int FOR = 50;
+  public static final int GRATHERT = 40;
+  public static final int FOR = 53;
   public static final int MINUS = 5;
-  public static final int PARAM = 25;
+  public static final int PARAM = 28;
   public static final int RPAREN = 15;
-  public static final int PARENTS = 62;
-  public static final int AND = 41;
-  public static final int RANGE = 52;
-  public static final int IN = 51;
-  public static final int OR = 42;
-  public static final int BOOL = 22;
+  public static final int PARENTS = 66;
+  public static final int AND = 44;
+  public static final int RANGE = 55;
+  public static final int IN = 54;
+  public static final int OR = 45;
+  public static final int BOOL = 24;
   public static final int PLUS = 4;
-  public static final int IF = 47;
-  public static final int MAIN = 24;
-  public static final int PARENTC = 63;
-  public static final int DOT = 33;
-  public static final int GRATHER = 36;
-  public static final int ABSTRACT = 31;
-  public static final int BOOLEAN = 30;
+  public static final int IF = 50;
+  public static final int MAIN = 27;
+  public static final int PARENTC = 67;
+  public static final int DOT = 36;
+  public static final int GRATHER = 39;
+  public static final int ABSTRACT = 34;
+  public static final int BOOLEAN = 33;
   public static final int EOF = 0;
-  public static final int RETURN = 59;
-  public static final int TRUE = 45;
+  public static final int RETURN = 63;
+  public static final int TRUE = 48;
   public static final int error = 1;
-  public static final int SQUARES = 64;
-  public static final int NEGATION = 35;
-  public static final int COMA = 26;
-  public static final int FLOATNUM = 44;
+  public static final int SQUARES = 68;
+  public static final int NEGATION = 38;
+  public static final int COMA = 29;
+  public static final int FLOATNUM = 47;
   public static final int DELIMETERBLOCK = 18;
-  public static final int EQEQ = 28;
+  public static final int EQEQ = 31;
+  public static final int ASIGNINTSARRAY = 19;
   public static final int NUMBER = 17;
-  public static final int BREAK = 29;
-  public static final int EQ = 32;
-  public static final int SWITCH = 53;
+  public static final int BREAK = 32;
+  public static final int EQ = 35;
+  public static final int SWITCH = 56;
   public static final int TIMES = 7;
-  public static final int LOWERT = 39;
-  public static final int SQUAREC = 65;
-  public static final int LOC = 55;
-  public static final int ELSE = 48;
-  public static final int FUNC = 23;
-  public static final int WHILE = 49;
-  public static final int DEFAULT = 58;
-  public static final int FLOAT = 21;
+  public static final int LOWERT = 42;
+  public static final int SQUAREC = 69;
+  public static final int LOC = 59;
+  public static final int ELSE = 51;
+  public static final int FUNC = 26;
+  public static final int ASIGNCHARSARRAY = 20;
+  public static final int WHILE = 52;
+  public static final int DEFAULT = 62;
+  public static final int FLOAT = 23;
   public static final int MODULUS = 13;
-  public static final int COMPARATION = 40;
+  public static final int COMPARATION = 43;
   public static final int MINPLS = 11;
-  public static final int BRAKE = 57;
-  public static final int GLOB = 56;
-  public static final int DIFF = 34;
-  public static final int FALSE = 46;
+  public static final int BRAKE = 61;
+  public static final int GLOB = 60;
+  public static final int DIFF = 37;
+  public static final int FALSE = 49;
   public static final int DIVISION = 10;
   public static final int MINUSW = 6;
-  public static final int ENDEXPR = 66;
-  public static final int PRINT = 60;
+  public static final int ENDEXPR = 70;
+  public static final int PRINT = 64;
+  public static final int STRINGT = 25;
   public static final int INTEGER_LITERAL = 16;
   public static final int IDENTIFIER = 2;
   public static final String[] terminalNames = new String[] {
@@ -95,10 +99,13 @@ public class sym {
   "INTEGER_LITERAL",
   "NUMBER",
   "DELIMETERBLOCK",
+  "ASIGNINTSARRAY",
+  "ASIGNCHARSARRAY",
   "INT",
   "CHAR",
   "FLOAT",
   "BOOL",
+  "STRINGT",
   "FUNC",
   "MAIN",
   "PARAM",
@@ -131,6 +138,7 @@ public class sym {
   "RANGE",
   "SWITCH",
   "CASE",
+  "ARRAY",
   "LOC",
   "GLOB",
   "BRAKE",

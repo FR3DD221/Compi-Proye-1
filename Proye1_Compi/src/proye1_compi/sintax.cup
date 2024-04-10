@@ -31,11 +31,11 @@ scan with {:return lex.next_token();:};
 /* Terminales (tokens returned by the scanner). */
 terminal            IDENTIFIER, SEMI, PLUS, MINUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, MINPLS, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
-terminal            DELIMETERBLOCK, INT, CHAR, FLOAT, BOOL, STRINGT, FUNC, MAIN, PARAM, COMA, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
+terminal            DELIMETERBLOCK, ASIGNINTSARRAY, ASIGNCHARSARRAY, INT, CHAR, FLOAT, BOOL, STRINGT, FUNC, MAIN, PARAM, COMA, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
 terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, COMPARATION, AND, OR, SEP;
 terminal            FLOATNUM;
 terminal            TRUE, FALSE;
-terminal            IF, ELSE, WHILE, FOR, IN, RANGE, SWITCH, CASE;
+terminal            IF, ELSE, WHILE, FOR, IN, RANGE, SWITCH, CASE, ARRAY;
 terminal            LOC, GLOB, BRAKE, DEFAULT, RETURN, PRINT, INPUT;
 terminal            PARENTS, PARENTC, SQUARES, SQUAREC;
 terminal            ENDEXPR;
@@ -44,8 +44,8 @@ terminal            ENDEXPR;
 non terminal            expr_list;
 non terminal            Integer expr;// used to store evaluated subexpressions
 non terminal            SI, varIns, varAsig, BLOCK, compAritOp, factor, term, funcStruc, mainStruc, types;
-non terminal            ifStruc, ifElseStruc;
-non terminal            exprP, exprLog, exprUni, opRel, opLog;
+non terminal            ifStruc, ifElseStruc, whileStruc, arrayIns, arrayAsig, arrayInsAsign, elementos, switchStruc, caseStruc;
+non terminal            exprP, exprLog, exprUni, opRel, opLog, arrayElement;
 
 /* Orden de precedencia */
 precedence left MINPLS, PLUS, MINUSW;
@@ -59,27 +59,31 @@ start with SI;
 SI ::= BLOCK;
 
 //Los distintos tipos que pueden tener una funcion o variable
-types ::= INT | CHAR | BOOL | FLOAT;
 
 //Bloque que se usa para el codigo siga un rumbo, vease como la lista de posibles expresiones
-BLOCK  ::=  SI exprP ENDEXPR
-       | SI varAsig 
-       | SI mainStruc
-       | SI funcStruc 
-       | SI varIns 
-       | SI ifStruc 
-       | SI ifElseStruc 
+BLOCK  ::=  BLOCK exprP ENDEXPR
+       | BLOCK varAsig 
+       | BLOCK mainStruc
+       | BLOCK funcStruc 
+       | BLOCK varIns 
+       | BLOCK ifStruc 
+       | BLOCK ifElseStruc 
+       | BLOCK whileStruc 
+       | BLOCK switchStruc 
+       | BLOCK arrayIns ENDEXPR
+       | BLOCK arrayInsAsign ENDEXPR
        | exprP ENDEXPR
+       | arrayIns ENDEXPR
+       | arrayInsAsign ENDEXPR
        | mainStruc 
        | funcStruc 
        | varAsig    
        | varIns 
        | ifStruc 
-       | ifElseStruc;
-       | switch;
-       | for;
-       | while;
-       | array;
+       | ifElseStruc
+       | switchStruc
+       //| for
+       | whileStruc;
 
 
 //Operaciones aritmeticas simples entre dos numeros
@@ -97,10 +101,11 @@ factor     ::= INTEGER_LITERAL
              | FLOATNUM
              | STRING_LITERAL
              | IDENTIFIER
+             | arrayElement
              | PARENTS compAritOp PARENTC;  
 
 
-//nuevo intento jiji
+//Manejo de distintas expresiones de comparacion y union
 exprP ::= exprLog 
       | compAritOp        
       | exprUni;
@@ -118,7 +123,6 @@ exprUni ::= exprLog opLog exprP       {: System.out.println("Se hizo 1"); :}
         | PARENTS exprUni PARENTC    {: System.out.println("Se hizo 3"); :};
 
 opRel ::= GRATHER | GRATHERT | LOWER | LOWERT | DIFF | COMPARATION;
-unaryOp ::= PLUS PLUS | MINUS MINUS
 opLog ::= AND | OR;
 
 
@@ -129,8 +133,14 @@ varAsig      ::=
         
 
 //Instanciacion simple de variables
-varIns       ::= LOC SEP types SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
-             | GLOB SEP types SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:};
+varIns       ::= LOC SEP INT SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | LOC SEP CHAR SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | LOC SEP FLOAT SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | LOC SEP BOOL SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
+             | GLOB SEP INT SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
+             | GLOB SEP CHAR SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
+             | GLOB SEP FLOAT SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
+             | GLOB SEP BOOL SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:};
 
 //Declaracion inicial del bloque para las funciones
 funcStruc    ::= FUNC SEP INT SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:System.out.println("Se declaro funcion normal");:}
@@ -144,81 +154,32 @@ mainStruc    ::= FUNC SEP INT SEP MAIN DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:Sy
 ifStruc      ::= IF PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro estructura condicional IF");:};
 ifElseStruc  ::= ifStruc ELSE DELIMETERBLOCK BLOCK DELIMETERBLOCK;
 
+//Produccion while
+whileStruc   ::= WHILE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro el ciclo while");:};
+
+
+//Declaracion, asignacion y acceso a un array
+arrayIns ::=  LOC SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
+            | LOC SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
+            | GLOB SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
+            | GLOB SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
+
+arrayAsig ::= EQ SQUARES elementos SQUAREC;
+
+elementos ::= compAritOp COMA elementos| compAritOp;
+
+arrayInsAsign ::= arrayIns arrayAsig;
+
+arrayElement ::= IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
+
+
 //Declaracion de switch
-switch ::= SWITCH PARENTS exprP PARENTC DELIMITERBLOCK CASE BREAK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro estructura switch");:};
-case ::= CASE
-        | CASE CASE
-break ::= CASE exprP SEP DELIMITERBLOCK BLOCK DELIMITERBLOCK BREAK 
+switchStruc ::= SWITCH PARENTS IDENTIFIER PARENTC DELIMETERBLOCK caseStruc DEFAULT SEP BLOCK DELIMETERBLOCK {:System.out.println("Se declaro estructura switch");:};
+caseStruc ::= CASE SEP compAritOp SEP BLOCK BREAK ENDEXPR caseStruc
+          | CASE SEP compAritOp SEP BLOCK BREAK ENDEXPR;
 
-
+/*
 //Declaracion del for
 for ::= FOR PARENTS types IDENTIFIER EQ exprP SEP IDENTIFIER opRel exprP SEP IDENTIFIER unaryOp PARENTC DELIMITERBLOCK BLOCK DELIMITERBLOCK {:System.out.println("Se declaro ciclo for");:};
+*/       
 
-//Produccion while
-while      ::= WHILE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro el ciclo while");:};
-
-//Arreglos
-array ::= ARRAY PARENTS INT PARENTC {:System.out.println("Se declaro un arreglo");:};
-         |ARRAY PARENTS FLOAT PARENTC {:System.out.println("Se declaro un arreglo");:};    
-
-//Manejo de errores
-error :
-    | error SEMI { System.out.println("Error de sintaxis: se esperaba ; "); }
-    | error ENDEXPR { System.out.println("Error de sintaxis: se esperaba ; "); }
-    | error SEP { System.out.println("Error de sintaxis: se esperaba : "); }
-    | error IDENTIFIER { System.out.println("Error de sintaxis: se esperaba un identificador "); }
-    | error PLUS { System.out.println("Error de sintaxis: se esperaba + "); }
-    | error MINUSW { System.out.println("Error de sintaxis: se esperaba - "); }
-    | error PRODUCT { System.out.println("Error de sintaxis: se esperaba * "); }
-    | error DIVISION { System.out.println("Error de sintaxis: se esperaba / "); }
-    | error POWER { System.out.println("Error de sintaxis: se esperaba ^ "); }
-    | error MODULUS { System.out.println("Error de sintaxis: se esperaba % "); }
-    | error STRING { System.out.println("Error de sintaxis: se esperaba un string "); }
-    | error EQ { System.out.println("Error de sintaxis: se esperaba = "); }
-    | error EQEQ { System.out.println("Error de sintaxis: se esperaba == "); }
-    | error ABSTRACT { System.out.println("Error de sintaxis: se esperaba una expresion abstracta "); }
-    | error BOOLEAN { System.out.println("Error de sintaxis: se esperaba una expresion booleana "); }
-    | error INT { System.out.println("Error de sintaxis: se esperaba int "); }
-    | error CHAR { System.out.println("Error de sintaxis: se esperaba char "); }
-    | error FLOAT { System.out.println("Error de sintaxis: se esperaba float "); }
-    | error BOOL { System.out.println("Error de sintaxis: se esperaba bool "); }
-    | error BREAK { System.out.println("Error de sintaxis: se esperaba break "); }
-    | error DOT { System.out.println("Error de sintaxis: se esperaba . "); }
-    | error INTEGER_LITERAL { System.out.println("Error de sintaxis: La expresion no corresponde con un numero "); }
-    | error FLOATNUM { System.out.println("Error de sintaxis: La expresion debe ser un numero flotante "); }
-    | error TRUE { System.out.println("Error de sintaxis: se esperaba true "); }
-    | error FALSE { System.out.println("Error de sintaxis: se esperaba false "); }
-    | error DELIMETERBLOCK { System.out.println("Error de sintaxis: se esperaba _ "); }
-    | error IF { System.out.println("Error de sintaxis: se esperaba if "); }
-    | error ELSE { System.out.println("Error de sintaxis: se esperaba else "); }
-    | error SWITCH { System.out.println("Error de sintaxis: se esperaba switch "); }
-    | error CASE { System.out.println("Error de sintaxis: se esperaba case "); }
-    | error FOR { System.out.println("Error de sintaxis: se esperaba for "); }
-    | error WHILE { System.out.println("Error de sintaxis: se esperaba while "); }
-    | error IN { System.out.println("Error de sintaxis: se esperaba in "); }
-    | error RANGE { System.out.println("Error de sintaxis: se esperaba range "); }
-    | error GRATHER { System.out.println("Error de sintaxis: se esperaba > "); }
-    | error LOWER { System.out.println("Error de sintaxis: se esperaba < "); }
-    | error GRATHERT { System.out.println("Error de sintaxis: se esperaba >= "); }
-    | error LOWERT { System.out.println("Error de sintaxis: se esperaba <= "); }
-    | error COMPARATION { System.out.println("Error de sintaxis: se esperaba == "); }
-    | error DIFF { System.out.println("Error de sintaxis: se esperaba != "); }
-    | error NEGATION { System.out.println("Error de sintaxis: se esperaba ! "); }
-    | error AND { System.out.println("Error de sintaxis: se esperaba && "); }
-    | error OR { System.out.println("Error de sintaxis: se esperaba || "); }
-    | error FUNC { System.out.println("Error de sintaxis: se esperaba func "); }
-    | error MAIN { System.out.println("Error de sintaxis: se esperaba main "); }
-    | error PARAM { System.out.println("Error de sintaxis: se esperaba un parametro "); }
-    | error PARENTS { System.out.println("Error de sintaxis: se esperaba ( "); }
-    | error PARENTC { System.out.println("Error de sintaxis: se esperaba ) "); }
-    | error SQUARES { System.out.println("Error de sintaxis: se esperaba [ "); }
-    | error SQUAREC { System.out.println("Error de sintaxis: se esperaba ] "); }
-    | error LOC { System.out.println("Error de sintaxis: se esperaba loc "); }
-    | error GLOB { System.out.println("Error de sintaxis: se esperaba glob "); }
-    | error RETURN { System.out.println("Error de sintaxis: se esperaba return "); }
-    | error DEFAULT { System.out.println("Error de sintaxis: se esperaba default "); }
-    | error BRAKE { System.out.println("Error de sintaxis: se esperaba brake "); }
-    | error PRINT { System.out.println("Error de sintaxis: se esperaba print "); }
-    | error INPUT { System.out.println("Error de sintaxis: se esperaba input "); }
-
-    ;            

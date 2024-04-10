@@ -18,8 +18,10 @@ import static jflex.logging.Out.println;
 public class Proye1_compi {
     public static void main(String[] args) throws SilentExit, Exception {
         // TODO code application logic here
-        String path= "D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\lexer.flex";
-        String path2= "D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\sintax.cup";
+        String path = "C:\\Users\\fredd\\OneDrive\\Documentos\\GitHub\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\lexer.flex";
+        String path2 = "C:\\Users\\fredd\\OneDrive\\Documentos\\GitHub\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\sintax.cup";
+        //String path= "D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\lexer.flex";
+        //String path2= "D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\sintax.cup";
         
         generarLexer(path);
         generarParser(path2);
@@ -46,8 +48,13 @@ public class Proye1_compi {
         Files.move(Paths.get(symLocation), Paths.get(symd1), StandardCopyOption.REPLACE_EXISTING);
         Files.move(Paths.get(ParserLocation), Paths.get(pard1), StandardCopyOption.REPLACE_EXISTING);
         
+<<<<<<< HEAD
         test1("D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\test.txt");
         test2("D:\\CompiladoresEInterpretes\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\test.txt");
+=======
+        test1("C:\\Users\\fredd\\OneDrive\\Documentos\\GitHub\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\test.txt");
+        test2("C:\\Users\\fredd\\OneDrive\\Documentos\\GitHub\\Compi-Proye-1\\Proye1_Compi\\src\\proye1_compi\\test.txt");
+>>>>>>> 090caba27aed1148c4ca7e0ebbb5a7a96eaba056
     }
     
     public static void generarLexer(String path) throws SilentExit, IOException {
