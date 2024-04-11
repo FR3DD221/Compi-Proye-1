@@ -45,7 +45,7 @@ non terminal            expr_list;
 non terminal            Integer expr;// used to store evaluated subexpressions
 non terminal            SI, varIns, varAsig, BLOCK, compAritOp, factor, term, funcStruc, mainStruc, types;
 non terminal            ifStruc, ifElseStruc, whileStruc, arrayIns, arrayAsig, arrayInsAsign, elementos, switchStruc, caseStruc, forStruc;
-non terminal            exprP, exprLog, exprUni, opRel, opLog, arrayElement, paramStruc, paramList, paramFunc, funcInvo, GEN, arrayInsGl, varInsGl;
+non terminal            exprP, exprLog, exprUni, opRel, opLog, arrayElement, paramStruc, paramList, paramFunc, funcInvo, GEN, arrayInsGl, varInsGl, varInsAsig, varInsAsigGl, arrayInsAsignGl;
 
 /* Orden de precedencia */
 precedence left MINPLS, PLUS, MINUSW;
@@ -58,7 +58,9 @@ start with SI;
 
 SI ::= GEN;
 
-GEN ::= funcStruc GEN | mainStruc GEN | arrayInsGl GEN | varInsGl GEN | funcStruc  | mainStruc  | arrayInsGl  | varInsGl;  
+GEN ::= funcStruc GEN | mainStruc GEN | arrayInsGl ENDEXPR GEN | varInsGl ENDEXPR GEN | varInsAsigGl 
+    | varInsAsigGl GEN |funcStruc | mainStruc | arrayInsGl ENDEXPR | varInsGl ENDEXPR | error | error GEN
+    | arrayInsAsignGl GEN | arrayInsAsignGl;  
 
 //Los distintos tipos que pueden tener una funcion o variable
 
@@ -67,21 +69,23 @@ BLOCK  ::=  BLOCK exprP ENDEXPR
        | BLOCK varAsig 
        | BLOCK mainStruc
        | BLOCK funcStruc 
-       | BLOCK varIns 
+       | BLOCK varIns ENDEXPR
        | BLOCK ifStruc 
        | BLOCK ifElseStruc 
        | BLOCK whileStruc 
        | BLOCK switchStruc 
        | BLOCK forStruc 
        | BLOCK arrayIns ENDEXPR
-       | BLOCK arrayInsAsign ENDEXPR
+       | BLOCK varInsAsig 
+       | BLOCK arrayInsAsign
        | exprP ENDEXPR
        | arrayIns ENDEXPR
-       | arrayInsAsign ENDEXPR
+       | arrayInsAsign
        | mainStruc 
        | funcStruc 
        | varAsig    
-       | varIns 
+       | varInsAsig 
+       | varIns ENDEXPR
        | ifStruc 
        | ifElseStruc
        | switchStruc
@@ -139,21 +143,22 @@ varAsig      ::=  IDENTIFIER EQ exprP ENDEXPR       {:System.out.println("Se asi
         
 
 //Instanciacion simple de variables
-varIns       ::= LOC SEP INT SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
-             | LOC SEP CHAR SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
-             | LOC SEP FLOAT SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
-             | LOC SEP BOOL SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:}
-             | LOC SEP STRINGT SEP IDENTIFIER ENDEXPR       {:System.out.println("Se creo variable local");:};
+varIns       ::= LOC SEP INT SEP IDENTIFIER        {:System.out.println("Se creo variable local");:}
+             | LOC SEP CHAR SEP IDENTIFIER        {:System.out.println("Se creo variable local");:}
+             | LOC SEP FLOAT SEP IDENTIFIER        {:System.out.println("Se creo variable local");:}
+             | LOC SEP BOOL SEP IDENTIFIER        {:System.out.println("Se creo variable local");:}
+             | LOC SEP STRINGT SEP IDENTIFIER        {:System.out.println("Se creo variable local");:};
 
 
-varInsGl       ::=  GLOB SEP INT SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
-             | GLOB SEP CHAR SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
-             | GLOB SEP FLOAT SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
-             | GLOB SEP STRINGT SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:}
-             | GLOB SEP BOOL SEP IDENTIFIER ENDEXPR        {:System.out.println("Se creo variable global");:};
+varInsGl       ::=  GLOB SEP INT SEP IDENTIFIER         {:System.out.println("Se creo variable global");:}
+             | GLOB SEP CHAR SEP IDENTIFIER         {:System.out.println("Se creo variable global");:}
+             | GLOB SEP FLOAT SEP IDENTIFIER         {:System.out.println("Se creo variable global");:}
+             | GLOB SEP STRINGT SEP IDENTIFIER         {:System.out.println("Se creo variable global");:}
+             | GLOB SEP BOOL SEP IDENTIFIER         {:System.out.println("Se creo variable global");:};
 
-varInsAsig   ::= varIns varAsig
-             | varInsGl varAsig;
+varInsAsig   ::= varIns varAsig;
+
+varInsAsigGl   ::= varInsGl varAsig;
 
 
 //Declaracion inicial del bloque para las funciones
@@ -181,20 +186,21 @@ whileStruc   ::= WHILE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK
 
 
 //Declaracion, asignacion y acceso a un array
-arrayIns ::=  LOC SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC ENDEXPR
-            | LOC SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC ENDEXPR;
+arrayIns ::=  LOC SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
+            | LOC SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
 
-arrayInsGl ::=  GLOB SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC ENDEXPR
-            | GLOB SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC ENDEXPR;
+arrayInsGl ::=  GLOB SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
+            | GLOB SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
 
 //Declaracion de ARRAYS Y TODO LO RELACIONADO
-arrayAsig ::= IDENTIFIER EQ SQUARES elementos SQUAREC
-          | EQ SQUARES elementos SQUAREC;
+arrayAsig ::= IDENTIFIER EQ SQUARES elementos SQUAREC ENDEXPR
+          | EQ SQUARES elementos SQUAREC ENDEXPR;
 
 elementos ::= compAritOp COMA elementos| compAritOp;
 
-arrayInsAsign ::= arrayIns arrayAsig
-              | arrayInsGl arrayAsig;
+arrayInsAsign ::= arrayIns arrayAsig;
+
+arrayInsAsignGl ::= arrayInsGl arrayAsig;
 
 arrayElement ::= IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
 
