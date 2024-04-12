@@ -52,6 +52,7 @@ minPls = ([+-])+
 
 
 %state STRING
+%state CHARSTR
 
 %%
 
@@ -70,18 +71,21 @@ minPls = ([+-])+
 <YYINITIAL> "*"                  { return symbol(sym.PRODUCT); }
 <YYINITIAL> "/"                  { return symbol(sym.DIVISION); }
 <YYINITIAL> "^"                  { return symbol(sym.POWER); }
-<YYINITIAL> {minPls}             { return symbol(sym.MINPLS); }
+<YYINITIAL> "--"                 { return symbol(sym.DMINUS); }
+<YYINITIAL> "++"                 { return symbol(sym.DPLUS); }
+//<YYINITIAL> {minPls}             { return symbol(sym.MINPLS); }
 <YYINITIAL> "_"                  { return symbol(sym.DELIMETERBLOCK); }
 <YYINITIAL> "%"                  { return symbol(sym.MODULUS); }
 <YYINITIAL> ":"                  { return symbol(sym.SEP); }
 <YYINITIAL> "int"                { return symbol(sym.INT); }
 <YYINITIAL> "char"               { return symbol(sym.CHAR); }
 <YYINITIAL> "float"              { return symbol(sym.FLOAT); }
-<YYINITIAL> "boolean"            { return symbol(sym.BOOL); }
+<YYINITIAL> "bool"            { return symbol(sym.BOOL); }
 <YYINITIAL> "string"             { return symbol(sym.STRINGT); }
 <YYINITIAL> "array"              { return symbol(sym.ARRAY); }
 <YYINITIAL> "if"                 { return symbol(sym.IF); }
 <YYINITIAL> "else"               { return symbol(sym.ELSE); }
+
 
 <YYINITIAL> "switch"             { return symbol(sym.SWITCH); }
 <YYINITIAL> "case"               { return symbol(sym.CASE); }
@@ -123,11 +127,12 @@ minPls = ([+-])+
 
 <YYINITIAL> {
   /* identifiers */ 
-  {Identifier}                   { return symbol(sym.IDENTIFIER); }
+  {Identifier}                   { return symbol(sym.IDENTIFIER, yytext()); }
 
   /* literals */
   <YYINITIAL> {DecIntegerLiteral}  { return symbol(sym.INTEGER_LITERAL); }
   \"                             { string.setLength(0); yybegin(STRING); }
+  \'                             { string.setLength(0); yybegin(CHARSTR); }
 
   /* operators */
   "="                            { return symbol(sym.EQ); }
@@ -151,6 +156,19 @@ minPls = ([+-])+
 
   \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
+  \\                             { string.append('\\'); }
+}
+
+<CHARSTR> {
+  \'                             { yybegin(YYINITIAL); 
+                                   return symbol(sym.CHARSTR,
+                                   string.toString()); }
+  [^\n\r\'\\]+                   { string.append( yytext() ); }
+  \\t                            { string.append('\t'); }
+  \\n                            { string.append('\n'); }
+
+  \\r                            { string.append('\r'); }
+  \\\'                           { string.append('\''); }
   \\                             { string.append('\\'); }
 }
 

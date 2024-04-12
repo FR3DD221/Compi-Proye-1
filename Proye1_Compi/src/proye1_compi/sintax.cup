@@ -1,15 +1,34 @@
 package proye1_compi;
 import java_cup.runtime.*;
+import java.util.HashMap; 
+import java.util.List;
+import java.util.ArrayList;
 
 parser code {:
     // Connect this parser to a scanner!
     Lexer lex;
+    HashMap<String, ArrayList<String>> scopePrograma = new HashMap<String, ArrayList<String>>();
+    String currentHash;
+    String globalHash = "SCOPE GLOBAL";
 
     @SuppressWarnings("deprecation")
     public Parser(Lexer lex) {
         this.lex = lex;
         this.symbolFactory = new DefaultSymbolFactory();
     }
+
+    public void imprimirscopePrograma () {
+        System.out.println("\nTABLA DE SIMBOLOS");
+        for (String key: scopePrograma.keySet()) {
+            System.out.println("\n" + key);
+            System.out.println("Valores: ");
+            for (String item : scopePrograma.get(key)) {
+             System.out.println(item);
+            }
+            System.out.println("");
+        }
+    }
+
     //recuperacion de errores de sintaxis
     public void syntax_error(Symbol s) {
         System.out.println("!!Error de Sintaxis en : " +  s.value + " linea: " +  (s.left+1) +  " columna: " +  (s.right+1));
@@ -29,9 +48,9 @@ scan with {:return lex.next_token();:};
 
 
 /* Terminales (tokens returned by the scanner). */
-terminal            IDENTIFIER, SEMI, PLUS, MINUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, MINPLS, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
+terminal            IDENTIFIER, SEMI, PLUS, MINUS, DMINUS, DPLUS, MINUSW, TIMES, UMINUS, PRODUCT, DIVISION, POWER, MODULUS, LPAREN, RPAREN, INTEGER_LITERAL;
 terminal Integer    NUMBER;        // our scanner provides numbers as integers
-terminal            DELIMETERBLOCK, ASIGNINTSARRAY, ASIGNCHARSARRAY, INT, CHAR, FLOAT, BOOL, STRINGT, FUNC, MAIN, PARAM, COMA, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
+terminal            DELIMETERBLOCK, ASIGNINTSARRAY, ASIGNCHARSARRAY, CHARSTR, INT, CHAR, FLOAT, BOOL, STRINGT, FUNC, MAIN, PARAM, COMA, STRING_LITERAL, EQEQ, BREAK, BOOLEAN, ABSTRACT, EQ, DOT;
 terminal            DIFF, NEGATION, GRATHER, GRATHERT, LOWER, LOWERT, COMPARATION, AND, OR, SEP;
 terminal            FLOATNUM;
 terminal            TRUE, FALSE;
@@ -43,12 +62,12 @@ terminal            ENDEXPR;
 /* No terminales */
 non terminal            expr_list;
 non terminal            Integer expr;// used to store evaluated subexpressions
-non terminal            SI, varIns, varAsig, BLOCK, compAritOp, factor, term, funcStruc, mainStruc, types;
-non terminal            ifStruc, ifElseStruc, whileStruc, arrayIns, arrayAsig, arrayInsAsign, elementos, switchStruc, caseStruc, forStruc;
-non terminal            exprP, exprLog, exprUni, opRel, opLog, arrayElement, paramStruc, paramList, paramFunc, funcInvo, GEN, arrayInsGl, varInsGl, varInsAsig, varInsAsigGl, arrayInsAsignGl;
+non terminal            SI, varIns, varAsig, BLOCK, compAritOp, factor, term, funcStruc, mainStruc, types, printStruc;
+non terminal            ifStruc, ifElseStruc, whileStruc, arrayIns, arrayAsig, arrayInsAsign, elementos, switchStruc, caseStruc, forStruc, numbers;
+non terminal            inputStruc, mainInitial, funInitial, exprP, exprLog, exprUni, opRel, opLog, arrayElement, paramStruc, paramList, paramFunc, funcInvo, GEN, arrayInsGl, varInsGl, varInsAsig, varInsAsigGl, arrayInsAsignGl;
 
 /* Orden de precedencia */
-precedence left MINPLS, PLUS, MINUSW;
+precedence left PLUS, MINUSW;
 precedence left PRODUCT;
 precedence left DIVISION;
 
@@ -56,10 +75,11 @@ precedence left DIVISION;
 
 start with SI;
 
-SI ::= GEN;
+SI ::= {: scopePrograma.put(globalHash, new ArrayList<String>()); :} 
+    GEN {: imprimirscopePrograma(); :};
 
 GEN ::= funcStruc GEN | mainStruc GEN | arrayInsGl ENDEXPR GEN | varInsGl ENDEXPR GEN | varInsAsigGl 
-    | varInsAsigGl GEN |funcStruc | mainStruc | arrayInsGl ENDEXPR | varInsGl ENDEXPR | error | error GEN
+    | varInsAsigGl GEN | funcStruc | mainStruc | arrayInsGl ENDEXPR | varInsGl ENDEXPR | error | error GEN
     | arrayInsAsignGl GEN | arrayInsAsignGl;  
 
 //Los distintos tipos que pueden tener una funcion o variable
@@ -67,6 +87,10 @@ GEN ::= funcStruc GEN | mainStruc GEN | arrayInsGl ENDEXPR GEN | varInsGl ENDEXP
 //Bloque que se usa para el codigo siga un rumbo, vease como la lista de posibles expresiones
 BLOCK  ::=  BLOCK exprP ENDEXPR
        | BLOCK varAsig 
+       | BLOCK arrayInsGl ENDEXPR
+       | BLOCK varInsGl ENDEXPR
+       | BLOCK varInsAsigGl
+       | BLOCK arrayInsAsignGl
        | BLOCK mainStruc
        | BLOCK funcStruc 
        | BLOCK varIns ENDEXPR
@@ -78,12 +102,21 @@ BLOCK  ::=  BLOCK exprP ENDEXPR
        | BLOCK arrayIns ENDEXPR
        | BLOCK varInsAsig 
        | BLOCK arrayInsAsign
+       | BLOCK printStruc ENDEXPR
+       | BLOCK BREAK ENDEXPR
+       | BLOCK RETURN SEP exprP ENDEXPR
+       | BLOCK RETURN ENDEXPR
+       | BLOCK inputStruc
        | exprP ENDEXPR
        | arrayIns ENDEXPR
        | arrayInsAsign
        | mainStruc 
        | funcStruc 
        | varAsig    
+       | arrayInsGl ENDEXPR
+       | varInsGl ENDEXPR
+       | varInsAsigGl
+       | arrayInsAsignGl
        | varInsAsig 
        | varIns ENDEXPR
        | ifStruc 
@@ -91,28 +124,44 @@ BLOCK  ::=  BLOCK exprP ENDEXPR
        | switchStruc
        | forStruc
        | whileStruc
+       | printStruc ENDEXPR
+       | BREAK ENDEXPR
+       | RETURN SEP exprP ENDEXPR
+       | RETURN ENDEXPR
+       | inputStruc
        | error;
 
+
+numbers ::= INTEGER_LITERAL | FLOATNUM;
 
 //Operaciones aritmeticas simples entre dos numeros
 /* Reglas de producción para operaciones aritméticas */
 compAritOp ::= term
-             | compAritOp MINPLS term  {: System.out.println("Se hizo MULTIPLESIMB"); :}
+             //| compAritOp MINPLS term  {: System.out.println("Se hizo MULTIPLESIMB"); :}
              | compAritOp PLUS term   {: System.out.println("Se hizo SUMA"); :}
              | compAritOp MINUSW term  {: System.out.println("Se hizo RESTA"); :};
 
 term       ::= factor
              | term PRODUCT factor  {: System.out.println("Se hizo PRODUCTO"); :}
-             | term DIVISION factor {: System.out.println("Se hizo COCIENTE"); :};
+             | term DIVISION factor {: System.out.println("Se hizo COCIENTE"); :}
+             | term POWER factor {: System.out.println("Se hizo POTENCIA"); :}
+             | term MODULUS factor {: System.out.println("Se hizo MODULO"); :};
 
-factor     ::= INTEGER_LITERAL
-             | FLOATNUM
+factor     ::= numbers
+             | MINUSW numbers
              | STRING_LITERAL
-             | IDENTIFIER
+             | CHARSTR
+             | IDENTIFIER 
+             | IDENTIFIER DMINUS     
+             | IDENTIFIER DPLUS
              | arrayElement
              | paramList
              | funcInvo
+             | MINUSW PARENTS compAritOp PARENTC
              | PARENTS compAritOp PARENTC;  
+
+
+inputStruc ::= INPUT PARENTS IDENTIFIER PARENTC ENDEXPR;
 
 
 //Manejo de distintas expresiones de comparacion y union
@@ -122,9 +171,7 @@ exprP ::= exprLog
 
 exprLog ::= compAritOp opRel compAritOp
         | PARENTS exprLog PARENTC
-        | MINUSW compAritOp 
-        | PLUS compAritOp 
-        | MINPLS compAritOp 
+        | opRel exprLog
         | TRUE
         | FALSE;
 
@@ -132,53 +179,108 @@ exprUni ::= exprLog opLog exprP       {: System.out.println("Se hizo 1"); :}
         | IDENTIFIER opLog exprP                   {: System.out.println("Se hizo 2"); :}
         | PARENTS exprUni PARENTC    {: System.out.println("Se hizo 3"); :};
 
-opRel ::= GRATHER | GRATHERT | LOWER | LOWERT | DIFF | COMPARATION;
+opRel ::= GRATHER | GRATHERT | LOWER | LOWERT | DIFF | COMPARATION | NEGATION;
 opLog ::= AND | OR;
+
 
 
 
 //Asignación de un valor a una variable
 varAsig      ::=  IDENTIFIER EQ exprP ENDEXPR       {:System.out.println("Se asigno VAR");:}
              | EQ exprP ENDEXPR;
-        
+
 
 //Instanciacion simple de variables
-varIns       ::= LOC SEP INT SEP IDENTIFIER        {:System.out.println("Se creo variable local");:}
-             | LOC SEP CHAR SEP IDENTIFIER        {:System.out.println("Se creo variable local");:}
-             | LOC SEP FLOAT SEP IDENTIFIER        {:System.out.println("Se creo variable local");:}
-             | LOC SEP BOOL SEP IDENTIFIER        {:System.out.println("Se creo variable local");:}
-             | LOC SEP STRINGT SEP IDENTIFIER        {:System.out.println("Se creo variable local");:};
+    varIns       ::= LOC SEP INT SEP IDENTIFIER:ID    {: scopePrograma.get(currentHash).add("Instancia loc: " + ID.toString() + ":" + "INT"); :}    
+                 | LOC SEP CHAR SEP IDENTIFIER:ID     {: scopePrograma.get(currentHash).add("Instancia loc: " + ID.toString() + ":" + "CHAR"); :}      
+                 | LOC SEP FLOAT SEP IDENTIFIER:ID    {: scopePrograma.get(currentHash).add("Instancia loc: " + ID.toString() + ":" + "FLOAT"); :}
+                 | LOC SEP BOOL SEP IDENTIFIER:ID     {: scopePrograma.get(currentHash).add("Instancia loc: " + ID.toString() + ":" + "BOOL"); :}    
+                 | LOC SEP STRINGT SEP IDENTIFIER:ID  {: scopePrograma.get(currentHash).add("Instancia loc: " + ID.toString() + ":" + "STRING"); :};
 
 
-varInsGl       ::=  GLOB SEP INT SEP IDENTIFIER         {:System.out.println("Se creo variable global");:}
-             | GLOB SEP CHAR SEP IDENTIFIER         {:System.out.println("Se creo variable global");:}
-             | GLOB SEP FLOAT SEP IDENTIFIER         {:System.out.println("Se creo variable global");:}
-             | GLOB SEP STRINGT SEP IDENTIFIER         {:System.out.println("Se creo variable global");:}
-             | GLOB SEP BOOL SEP IDENTIFIER         {:System.out.println("Se creo variable global");:};
 
-varInsAsig   ::= varIns varAsig;
+    varInsGl     ::=  GLOB SEP INT SEP IDENTIFIER:ID     {: scopePrograma.get(globalHash).add("Instancia GLOB: " + ID.toString() + ":" + "INT"); :}
+                 | GLOB SEP CHAR SEP IDENTIFIER:ID       {: scopePrograma.get(globalHash).add("Instancia GLOB: " + ID.toString() + ":" + "CHAR"); :}
+                 | GLOB SEP FLOAT SEP IDENTIFIER:ID      {: scopePrograma.get(globalHash).add("Instancia GLOB: " + ID.toString() + ":" + "FLOAT"); :}
+                 | GLOB SEP STRINGT SEP IDENTIFIER:ID    {: scopePrograma.get(globalHash).add("Instancia GLOB: " + ID.toString() + ":" + "STRING"); :}
+                 | GLOB SEP BOOL SEP IDENTIFIER:ID       {: scopePrograma.get(globalHash).add("Instancia GLOB: " + ID.toString() + ":" + "BOOL"); :};
 
-varInsAsigGl   ::= varInsGl varAsig;
+    varInsAsig   ::= varIns varAsig;
 
+    varInsAsigGl   ::= varInsGl varAsig;
 
-//Declaracion inicial del bloque para las funciones
-funcStruc    ::= FUNC SEP INT SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:System.out.println("Se declaro funcion normal");:}
-             | FUNC SEP CHAR SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro funcion normal");:}
-             | FUNC SEP BOOL SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro funcion normal");:}
-             | FUNC SEP STRINGT SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro funcion normal");:}
-             | FUNC SEP FLOAT SEP IDENTIFIER DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:System.out.println("Se declaro funcion normal");:}; 
+    
+    funInitial   ::= FUNC SEP INT SEP IDENTIFIER:ID
+                            {:   String tipo;
+                                                             tipo = "tipo:func:INT";
+                                                             ArrayList<String> fun = new ArrayList<String>();
+                                                             currentHash = ID.toString();
+                                                             fun.add(tipo);
+                                                             scopePrograma.put(currentHash, fun);
+                            :}
+                 | FUNC SEP CHAR SEP IDENTIFIER:ID
+                            {:   String tipo;
+                                                             tipo = "tipo:func:CHAR";
+                                                             ArrayList<String> fun = new ArrayList<String>();
+                                                             currentHash = ID.toString();
+                                                             fun.add(tipo);
+                                                             scopePrograma.put(currentHash, fun);
+                            :}
+                 | FUNC SEP BOOL SEP IDENTIFIER:ID
+                            {:   String tipo;
+                                                             tipo = "tipo:func:BOOL";
+                                                             ArrayList<String> fun = new ArrayList<String>();
+                                                             currentHash = ID.toString();
+                                                             fun.add(tipo);
+                                                             scopePrograma.put(currentHash, fun);
+                            :}
+                 | FUNC SEP STRINGT SEP IDENTIFIER:ID
+                            {:   String tipo;
+                                                             tipo = "tipo:func:STRING";
+                                                             ArrayList<String> fun = new ArrayList<String>();
+                                                             currentHash = ID.toString();
+                                                             fun.add(tipo);
+                                                             scopePrograma.put(currentHash, fun);
+                            :}
+                 | FUNC SEP FLOAT SEP IDENTIFIER:ID
+                            {:   String tipo;
+                                                             tipo = "tipo:func:FLOAT";
+                                                             ArrayList<String> fun = new ArrayList<String>();
+                                                             currentHash = ID.toString();
+                                                             fun.add(tipo);
+                                                             scopePrograma.put(currentHash, fun);
+                            :};
 
-mainStruc    ::= FUNC SEP INT SEP MAIN DELIMETERBLOCK BLOCK DELIMETERBLOCK  {:System.out.println("Se declaro funcion MAIN  ");:}; 
+    //Declaracion inicial del bloque para las funciones
+    funcStruc    ::= 
+                 // funcion con return sin contenido
+                 funInitial DELIMETERBLOCK BLOCK RETURN ENDEXPR DELIMETERBLOCK  
 
-paramFunc    ::= IDENTIFIER COMA paramFunc 
-             | IDENTIFIER;
+                 // funcion con return con contenido  
+                 | funInitial DELIMETERBLOCK BLOCK RETURN SEP exprP ENDEXPR DELIMETERBLOCK;  
 
-funcInvo     ::= IDENTIFIER PARENTS paramFunc PARENTC;
+mainInitial  ::= FUNC SEP INT SEP MAIN 
+                            {:                       String tipo;
+                                                         tipo = "tipo:MAIN:INT";
+                                                         ArrayList<String> fun = new ArrayList<String>();
+                                                         currentHash = "MAIN";
+                                                         fun.add(tipo);
+                                                         scopePrograma.put(currentHash, fun);
+                            :};
+
+mainStruc    ::= mainInitial DELIMETERBLOCK BLOCK RETURN ENDEXPR DELIMETERBLOCK  
+             | mainInitial DELIMETERBLOCK BLOCK RETURN SEP exprP ENDEXPR DELIMETERBLOCK;
+
+paramFunc    ::= exprP COMA paramFunc 
+             | exprP;
+
+funcInvo     ::= IDENTIFIER PARENTS paramFunc PARENTC
+             | IDENTIFIER PARENTS PARENTC;
 
 
 
 ifStruc      ::= IF PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK   {:System.out.println("Se declaro estructura condicional IF");:};
-ifElseStruc  ::= ifStruc ELSE SEP DELIMETERBLOCK BLOCK DELIMETERBLOCK;
+ifElseStruc  ::= ifStruc ELSE DELIMETERBLOCK BLOCK DELIMETERBLOCK;
 
 
 //Produccion while
@@ -186,11 +288,11 @@ whileStruc   ::= WHILE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK
 
 
 //Declaracion, asignacion y acceso a un array
-arrayIns ::=  LOC SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
-            | LOC SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
+arrayIns ::=  LOC SEP INT SEP ARRAY SEP IDENTIFIER:ID SQUARES INTEGER_LITERAL SQUAREC {: scopePrograma.get(currentHash).add("Instancia LOC ARR: " + ID.toString() + ":" + "INT"); :}
+            | LOC SEP CHAR SEP ARRAY SEP IDENTIFIER:ID SQUARES INTEGER_LITERAL SQUAREC {: scopePrograma.get(currentHash).add("Instancia LOC ARR: " + ID.toString() + ":" + "CHAR"); :};
 
-arrayInsGl ::=  GLOB SEP INT SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC
-            | GLOB SEP CHAR SEP ARRAY SEP IDENTIFIER SQUARES INTEGER_LITERAL SQUAREC;
+arrayInsGl ::=  GLOB SEP INT SEP ARRAY SEP IDENTIFIER:ID SQUARES INTEGER_LITERAL SQUAREC  {: scopePrograma.get(globalHash).add("Instancia GLOB ARR: " + ID.toString() + ":" + "INT"); :}
+            | GLOB SEP CHAR SEP ARRAY SEP IDENTIFIER:ID SQUARES INTEGER_LITERAL SQUAREC {: scopePrograma.get(globalHash).add("Instancia GLOB ARR: " + ID.toString() + ":" + "CHAR"); :};
 
 //Declaracion de ARRAYS Y TODO LO RELACIONADO
 arrayAsig ::= IDENTIFIER EQ SQUARES elementos SQUAREC ENDEXPR
@@ -212,21 +314,25 @@ caseStruc ::= CASE SEP compAritOp SEP BLOCK BREAK ENDEXPR caseStruc
 
 
 //Declaracion de FOR
-forStruc ::= FOR IDENTIFIER IN RANGE PARENTS INTEGER_LITERAL COMA INTEGER_LITERAL PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK
-         | FOR IDENTIFIER IN RANGE PARENTS INTEGER_LITERAL PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK
-         | FOR IDENTIFIER IN RANGE PARENTS INTEGER_LITERAL COMA INTEGER_LITERAL COMA INTEGER_LITERAL PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK;
+forStruc ::= FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTS exprP COMA exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK
+         | FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTS exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK
+         | FOR SEP IDENTIFIER SEP IN SEP RANGE PARENTS exprP COMA exprP COMA exprP PARENTC DELIMETERBLOCK BLOCK DELIMETERBLOCK;
 
 
 //Declaracion de parametros
-paramStruc ::= PARAM SEP INT SEP IDENTIFIER
-      | PARAM SEP CHAR SEP IDENTIFIER
-      | PARAM SEP STRINGT SEP IDENTIFIER
-      | PARAM SEP FLOAT SEP IDENTIFIER
-      | PARAM SEP BOOL SEP IDENTIFIER; 
+paramStruc ::= PARAM SEP INT SEP IDENTIFIER:ID {: scopePrograma.get(currentHash).add("Instancia PARAM: " + ID.toString() + ":" + "INT"); :}
+      | PARAM SEP CHAR SEP IDENTIFIER:ID {: scopePrograma.get(currentHash).add("Instancia PARAM: " + ID.toString() + ":" + "CHAR"); :}
+      | PARAM SEP STRINGT SEP IDENTIFIER:ID {: scopePrograma.get(currentHash).add("Instancia PARAM: " + ID.toString() + ":" + "STRING"); :}
+      | PARAM SEP FLOAT SEP IDENTIFIER:ID {: scopePrograma.get(currentHash).add("Instancia PARAM: " + ID.toString() + ":" + "FLOAT"); :}
+      | PARAM SEP BOOL SEP IDENTIFIER:ID  {: scopePrograma.get(currentHash).add("Instancia PARAM: " + ID.toString() + ":" + "BOOL"); :}; 
 
 paramList ::= paramStruc paramList
        | paramStruc;
 
+
+printStruc ::= PRINT PARENTS IDENTIFIER PARENTC
+           | PRINT PARENTS CHARSTR PARENTC
+           | PRINT PARENTS STRING_LITERAL PARENTC;
 
 
 //Manejo de errores
